@@ -1,0 +1,12 @@
+FROM postgres:latest
+  
+  # Set the superuser password for PostgreSQL
+ENV POSTGRES_PASSWORD=Togar123
+  
+  # Create a new database
+ENV POSTGRES_DB=togarjsdatabase
+  # Creating PG user
+ENV POSTGRES_USER=pg-togar
+  
+  # Expose the PostgreSQL port
+EXPOSE 5432
