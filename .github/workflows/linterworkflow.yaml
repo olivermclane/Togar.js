@@ -12,8 +12,10 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           destination_branch: "master"
-          pr_title: "PLACEHOLDER TITLE"
+          pr_title: "TITLE"
+          pr_description: "Description"
           pr_draft: true
+          pr_reviewer: "olivermclane"
   build:
     name: Linting Code Base
     runs-on: ubuntu-latest
@@ -30,3 +32,5 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_HTML: true
+          FILTER_REGEX_EXCLUDE: .*node_modules/.*
+          GITHUB_TOKEN: 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
