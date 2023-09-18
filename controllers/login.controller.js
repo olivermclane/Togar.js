@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
         User.create(newUser)
             .then(data => {
                 res.send({
-                    message: "Signup Successful! Welcome new user!"
+                    message: "Signup Successful! Welcome new user!" + newUser.username,
                 });
             })
             .catch(err => {
@@ -51,7 +51,7 @@ exports.login = async (req, res) => {
         //If user is in database login.
         if(user != null) {
             res.status(200).send({
-                message: "Login Successful",
+                message: "Login Successful: Welcome back: " + user.username,
             })
         } else {
             res.status(403).send({

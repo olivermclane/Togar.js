@@ -1,7 +1,7 @@
 const dbConfig = require("../config/db.config.js");
 
 const Sequelize = require("sequelize");
-const TogarSerializer = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+const DatabaseCon = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
     dialect: dbConfig.dialect,
     operatorsAliases: false,
@@ -17,7 +17,7 @@ const TogarSerializer = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSW
 const database = {};
 
 database.Sequelize = Sequelize;
-database.connection = TogarSerializer;
+database.connection = DatabaseCon;
 
 database.users = require('./user.model.js')(database.connection, database.Sequelize);
 module.exports = database;
