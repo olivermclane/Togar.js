@@ -1,6 +1,6 @@
 name: Node.js CI & Linter
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   create_pr:
