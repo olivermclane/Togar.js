@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
         User.create(newUser)
             .then(data => {
                 res.send({
-                    message: "Signup Successful! Welcome new user!" + newUser.username,
+                    message: "Signup Successful! Your username is @" + newUser.username,
                 });
             })
             .catch(err => {
