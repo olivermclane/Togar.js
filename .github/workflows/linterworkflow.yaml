@@ -30,3 +30,4 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_HTML: true
+          GITHUB_TOKEN: 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
