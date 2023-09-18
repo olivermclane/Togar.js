@@ -2,19 +2,24 @@ name: Node.js CI & Linter
 
 on: [push, pull_request]
 
+on:
+  push:
+    branches:
+      - feature-1
+
+permissions:
+  pull-requests: write
+
 jobs:
-  create_pr:
+  pull-request:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Create pull request
-        id: open-pr
-        uses: repo-sync/pull-request@v3
-        with:
-          destination_branch: "master"
-          pr_title: "PLACEHOLDER TITLE"
-          pr_draft: true
-          pr_reviewer: "olivermclane"
+      - name: pull-request
+        run: |
+          gh_pr_up() { gh pr create $* || gh pr edit $* }
+          gh_pr_up --title "Pull Request Title" --body "Description"
+
   build:
     name: Linting Code Base
     runs-on: ubuntu-latest
