@@ -14,49 +14,38 @@ async function findUserByUsername(username) {
     }
 }
 
-exports.login = async (req, res) => {
-    console.log(req.body) // Logging request
-    if ((!req.body.username)) {
-        //Response if request body doesn't include a Username,
-        //theoretically should never happen
-        res.status(400).send({
-            message: 'Please provide valid username or json format'
-        });
-        return;
-    }
+exports.createNewUser = async function createNewUser(username) {
     user = null;
-    if(req.body.username) {
-        user = await findUserByUsername(req.body.username);
+    if(username) {
+        user = await findUserByUsername(username);
     }
     //Creating the user in this instance (Similar to my previous project)
     if(user == null) {
         const newUser = {
-            username: req.body.username,
+            username: username,
         }
         User.create(newUser)
-            .then(data => {
-                res.send({
-                    message: "Signup Successful! Your username is @" + newUser.username,
-                });
-            })
             .catch(err => {
-                //If database throws issues with creating entry, we will throw a 500 error.
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while signing you up.",
-                    errObj: err
-                });
+                console.log(err)
+                return false;
             });
+        return true;
     } else {
         //If user is in database login.
         if(user != null) {
-            res.status(200).send({
-                message: "Login Successful: Welcome back: " + user.username,
-            })
+            return true;
         } else {
-            res.status(403).send({
-                message: "An error as occurred during Sign-In"
-            });
+            return false;
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
