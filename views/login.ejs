@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>TOGAR Register Page</title>
+    <title>TOGAR Login Page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
@@ -14,14 +14,14 @@
                     <h2 class="text-center">Login to TOGAR</h2>
                 </div>
                 <div class="card-body">
-                    <form action="/user/login" method="POST">
+                    <form action="/login" method="POST">
                         <div class="form-group">
                             <label for="username">Username:</label>
                             <input type="text" class="form-control" name="username" id="username" placeholder="Username" required>
                         </div>
                         <div class="form-group text-center">
                             <button type="submit" class="btn btn-primary btn-block">Login</button>
-                            <a href="/user/register"> New to Togar? Register here</a>
+                            <a href="/register"> New to Togar? Register here</a>
                         </div>
                     </form>
                 </div>
