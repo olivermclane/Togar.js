@@ -1,15 +1,18 @@
 //Allows us to set request to only be allowed from our set origins.
 const cors = require('cors');
-const flash = require("express-flash")
+const flash = require("express-flash");
 //Express packages
 const express = require('express');
 const session = require('express-session');
 const passport = require("passport");
 var passportConfig = require('./auth/passport');
 
+//dotenv for enviorment variables
+require('dotenv').config();
+
 
 //Local Database for connection
-const database = require('./models/index.js')
+const database = require('./models/index.js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,7 +31,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({extended: true}));
 app.use(session({
-    secret: 'test',
+    secret: process.env.SESSION_SECRET,
     saveUninitialized: true,
     resave: true
 }));
