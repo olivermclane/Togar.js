@@ -20,4 +20,4 @@ jobs:
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_HTML: true
           FILTER_REGEX_EXCLUDE: .*node_modules/.*
-          GITHUB_TOKEN: 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
+          GITHUB_TOKEN: ${{ secrets.WORKFLOWTOKEN }}
