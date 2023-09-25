@@ -1,8 +1,16 @@
 //Allows us to set request to only be allowed from our set origins.
 const cors = require('cors');
-
+const flash = require("express-flash")
+//Express packages
 const express = require('express');
-const database = require('./models')
+const session = require('express-session');
+const passport = require("passport");
+var passportConfig = require('./auth/passport');
+
+
+//Local Database for connection
+const database = require('./models/index.js')
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -12,54 +20,28 @@ var corsOptions = {
 };
 
 app.set("view engine", "ejs");
-app.use(express.urlencoded({extended: true}));
 
 app.use(cors(corsOptions));
 
-const loginController = require('./controllers/login.controller');
-
-// parse requests of content-type - application/json
+database.connection.sync();
 app.use(express.json());
 
-database.connection.sync();
+app.use(express.urlencoded({extended: true}));
+app.use(session({
+    secret: 'test',
+    saveUninitialized: true,
+    resave: true
+}));
 
-app.get('/', (req, res) => {
-    res.json({message: 'Welcome to Togar'});
-});
-app.get("/user/login", (req, res) => {
-    res.render("login");
-});
-app.get("/user/register", (req, res) => {
-    res.render("register");
-});
-app.post("/api/login", (req, res) => {
-    if(loginController.createNewUser(req.body.username)) {
-        res.send("Welcome: " + req.body.username)
-    }
-    res.send("Login failed")
-});
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(flash());
+
+// Applying Routes
+app.use("/", require("./routes/login.routes"));
 
 
-app.get("/user/togar", (req , res) => {
-    res.render("togar");
-});
-app.post("/user/login", (req, res) => {
-    if(loginController.createNewUser(req.body.username)){
-        console.log("here?")
-        res.redirect("togar");
-    }
-    res.status(500).send({
-        message: "Some error occurred while signing you up."
-    });
-});
-
-
-app.post
-
-
-require("./routes/login.routes")(app);
-
-
-
+// Started Server
 app.listen(PORT, console.log("Server started on port:  " + PORT));
 
