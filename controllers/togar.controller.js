@@ -6,21 +6,22 @@ const path = require('path');
 
 
 const togarView = (req, res) => {
-    const directoryPath = path.join(__dirname, '../uploads');
-    // Read files from the uploads directory
-    fs.readdir(directoryPath, (err, files) => {
+    const userUploadsPath = path.join(__dirname, `../uploads/${req.user.id}`);
+
+    // Read files from the user's uploads directory
+    fs.readdir(userUploadsPath, (err, files) => {
         if (err) {
             console.error('Error reading files:', err);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
 
         // Create an array of image URLs
-        const imageUrls = files.map(file => `/uploads/${file}`);
+        const imageUrls = files.map(file => `/uploads/${req.user.id}/${file}`);
 
         // Render your view (assuming you're using a templating engine like EJS)
-        res.render('togar', {user: req.user, images: imageUrls });
+        res.render('togar', { user: req.user, images: imageUrls });
     });
-}
+};
 
 const togarUploadImage = (req, res) => {
     console.log(req.file);
