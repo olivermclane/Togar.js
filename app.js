@@ -46,6 +46,11 @@ app.use(
 
 
 app.use('/uploads', express.static('uploads'));
+app.use('/static', (req, res, next) => {
+    res.type('application/javascript');
+    next();
+});
+app.use('/static', express.static('static'));
 
 // Applying Routes
 app.use("/", require("./routes/routes"));
