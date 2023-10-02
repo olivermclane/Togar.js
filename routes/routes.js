@@ -13,6 +13,7 @@ const {
 } = require("../controllers/togar.controller.js")
 
 const { protectRoute } = require("../auth/protectRoutes");
+const {togarUploadImage} = require("../controllers/togar.controller");
 
 
 const router = express.Router();
@@ -28,7 +29,8 @@ router.post('/register', registerUser)
 
 //TOGAR APPLICATION ROUTING
 router.get("/togar", togarView, protectRoute)
-//router.post("/togar", togar,)
+
+router.post("/togar/upload", togarUploadImage)
 
 module.exports = router;
 

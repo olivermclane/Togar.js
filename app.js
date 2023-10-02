@@ -1,6 +1,7 @@
 //Allows us to set request to only be allowed from our set origins.
 const cors = require('cors');
 const flash = require("express-flash");
+
 //Express packages
 const express = require('express');
 const session = require('express-session');
@@ -30,19 +31,24 @@ database.connection.sync();
 app.use(express.json());
 
 app.use(express.urlencoded({extended: true}));
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: true,
-    resave: true
-}));
+app.use(
+    // Sessions info
+    session({
+        secret: process.env.SESSION_SECRET,
+        saveUninitialized: true,
+        resave: true
+    }),
+    // Applying Passport
+    passport.initialize(),
+    passport.session(),
+    flash()
+);
 
-app.use(passport.initialize());
-app.use(passport.session());
 
-app.use(flash());
+app.use('/uploads', express.static('uploads'));
 
 // Applying Routes
-app.use("/", require("./routes/login.routes"));
+app.use("/", require("./routes/routes"));
 
 
 // Started Server

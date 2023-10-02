@@ -1,18 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>TOGAR.js</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Togar</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet">
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand">TOGAR</a>
+    <a class="nav-link"  style="color: black !important;">Logged in as:
+        <%= user.username %></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="/logout"> <button type="submit" class="nav-link" >Logout</button> </a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <div class="container">
-    <div class="row justify-content-center">
-        <h3>Welcome User:  <%= user.username %> </h3> &nbsp;
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h2 class="text-center mb-5">These Are Your Images</h2>
+            <div class="slider">
+                <div class="slider-inner">
+                    <% images.forEach(imageUrl => { %>
+                        <img src="<%= imageUrl %>" alt="Image">
+                    <% }); %>
+                </div>
+                <div class="slider-prev">&#10094;</div>
+                <div class="slider-next">&#10095;</div>
+            </div>
+            <p class="mt-5">Below you can upload image files (.jpg and .png)</p>
+            <div class="upload">
+                <form method="POST" action="/togar/upload" enctype="multipart/form-data">
+                    <input type="hidden" name="upload-file" required/>
+                    <div class="form-group">
+                        <input type="file" name="imageFile" class="form-control-file"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
-<div>
-    <a href="/logout"> <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Logout</button> </a>
-</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="/style/scripts/image-gallery.js"></script>
 </body>
 </html>
