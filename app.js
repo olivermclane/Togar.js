@@ -2,6 +2,9 @@
 const cors = require('cors');
 const flash = require("express-flash");
 
+
+const path = require('path');
+
 //Express packages
 const express = require('express');
 const session = require('express-session');
@@ -46,11 +49,6 @@ app.use(
 
 
 app.use('/uploads', express.static('uploads'));
-app.use('/static', (req, res, next) => {
-    res.type('application/javascript');
-    next();
-});
-app.use('/static', express.static('static'));
 
 // Applying Routes
 app.use("/", require("./routes/routes"));

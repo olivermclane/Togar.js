@@ -32,5 +32,13 @@ router.get("/togar", togarView, protectRoute)
 
 router.post("/togar/upload", togarUploadImage)
 
+//LOGOUT ROUTING
+router.get('/logout', function(req, res, next){
+        req.logout(function(err) {
+                if (err) { return next(err); }
+                res.redirect('/login');
+        });
+});
+
 module.exports = router;
 
