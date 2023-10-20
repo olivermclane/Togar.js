@@ -13,8 +13,7 @@ cd Togar.js
 npm install
 ```
 ### Database Setup
-[!IMPORTANT]
-
+**Warning**
 The next step will be to set up the database for storing image information and storing user data. This will be a important step in running the application so do not skip this step
 
 ### Creating Local .env File
