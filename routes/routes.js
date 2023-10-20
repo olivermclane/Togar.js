@@ -28,7 +28,7 @@ router.get("/register", registerUserView)
 router.post('/register', registerUser)
 
 //TOGAR APPLICATION ROUTING
-router.get("/togar", protectRoute, togarView)
+router.get("/togar", protectRoute, togarView )
 
 router.post("/togar/upload", togarUploadImage)
 

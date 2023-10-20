@@ -7,8 +7,8 @@ var passport = require('passport');
 
 passport.use('local', new LocalStrategy({usernameField:'username',passwordField:'username'}
 ,function (req , username, done) {
-    console.log("starting")
-    User.findOne({where: {username: username }})
+    User.findOne({where:
+            {username: username }})
         .then(function (user) { // successful query to database
             console.log(user)
             if (user == null) {
