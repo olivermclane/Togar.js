@@ -14,7 +14,7 @@ npm install
 ```
 ### Database Setup
 
-The next step will be to set up the database for storing image information and storing user data. This will be a important step in running the application so do not skip this step
+The next step will be to set up the database for storing image information and storing user data. This will be a important step in running the application so do not skip this step.
 1. Install Docker on your computer if you haven't already.
 
    **Docker for Windows:** https://docs.docker.com/docker-for-windows/install/
@@ -27,7 +27,7 @@ The next step will be to set up the database for storing image information and s
       
    **Docker for CentOS:** https://docs.docker.com/engine/install/centos/
 
-2. Lets take at look at our dockerfile. We must put in the values for each of the following: **POSTGRES_PASSWORD,POSTGRES_DB, and POSTGRES_USER** 
+2. Lets take at look at our dockerfile which is located in our config folder. We must put in the values for each of the following: **POSTGRES_PASSWORD,POSTGRES_DB,and POSTGRES_USER** 
     ```shell
     FROM postgres:latest
     
