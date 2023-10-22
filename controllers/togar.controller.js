@@ -5,7 +5,7 @@ const multer = require('multer');
 const fs = require('fs'); // Node.js file system module for file operations
 const path = require('path'); // Node.js path module for working with file paths
 
-//function for GET method to display images for a user
+//Function for GET method to display images for a user, converts images to base64 and passes them to the frontend UI.
 const togarView = (req, res) => {
     const userUploadsPath = path.join(__dirname, `../uploads/${req.user.id}`);
 
@@ -16,17 +16,26 @@ const togarView = (req, res) => {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
 
-        // Create an array of image URLs
-        const imageUrls = files.map(file => `/uploads/${req.user.id}/${file}`);
+        // Array to store base64-encoded images
+        const base64Images = [];
 
-        // Render your view
-        res.render('togar', { user: req.user, images: imageUrls });
+        // Read each image file as a buffer, convert to base64, and push to base64Images array
+        files.forEach(file => {
+            const imagePath = path.join(userUploadsPath, file);
+            const imageBuffer = fs.readFileSync(imagePath);
+            const base64Image = imageBuffer.toString('base64');
+            const imageType = path.extname(file).slice(1);
+            const base64ImageUrl = `data:image/${imageType};base64,${base64Image}`;
+            base64Images.push(base64ImageUrl);
+        });
+
+        // Render your view with base64-encoded images
+        res.render('togar', { user: req.user, images: base64Images });
     });
 };
 
-//Function for POST Method to handle an upload from a user
+//Function for POST Method to handle an upload from a user. Using multer the images are saved to a local directory.
 const togarUploadImage = (req, res) => {
-    console.log(req.file);
     upload.single('imageFile')(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             // Handle Multer errors (e.g., file size limit exceeded)
@@ -37,7 +46,6 @@ const togarUploadImage = (req, res) => {
         }
 
         // File uploaded successfully, req.file contains the file details
-        console.log("test"+ req.file);
         res.redirect("/togar");
     });
 };
