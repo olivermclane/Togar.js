@@ -27,7 +27,7 @@ The next step will be to set up the database for storing image information and s
       
    **Docker for CentOS:** https://docs.docker.com/engine/install/centos/
 
-2. Build the Docker image by running the following command: **docker build -t "nameofdb" -f docker/dockerfile.yaml .**
+2. Build the Docker image by running the following command: **docker build -t "nameofdb" -f config/dockerfile.yaml .**
 3. Start a Docker container from the image with the following command: **docker run --name "{nameofcontainer}" -p 5432:5432 -d "{nameofdb}"**
 4. Verify that the container is running by running the following command: **docker ps**
 5. You've created the database and can move on to running the application.
