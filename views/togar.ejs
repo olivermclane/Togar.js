@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="static/css/togarstyle.css">
 </head>
 <body>
-<script src="static/scripts/image-gallery.js"></script>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand">TOGAR</a>
     <a class="nav-link"  style="color: black !important;">Logged in as:
@@ -32,7 +31,9 @@
             <div class="slider">
                 <div class="slider-inner">
                     <% images.forEach(imageUrl => { %>
-                        <img src="<%= imageUrl %>" alt="User Image">
+                        <div class="slide">
+                            <img src="<%= imageUrl %>" alt="Image">
+                        </div>
                     <% }); %>
                 </div>
                 <div class="slider-prev">&#10094;</div>
@@ -51,6 +52,7 @@
         </div>
     </div>
 </div>
+<script src="static/scripts/image-gallery.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
