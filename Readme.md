@@ -27,28 +27,56 @@ The next step will be to set up the database for storing image information and s
       
    **Docker for CentOS:** https://docs.docker.com/engine/install/centos/
 
-2. Build the Docker image by running the following command: **docker build -t "nameofdb" -f config/dockerfile.yaml .**
-3. Start a Docker container from the image with the following command: **docker run --name "{nameofcontainer}" -p 5432:5432 -d "{nameofdb}"**
-4. Verify that the container is running by running the following command: **docker ps**
-5. You've created the database and can move on to running the application.
+2. Lets take at look at our dockerfile. We must put in the values for each of the following: **POSTGRES_PASSWORD,POSTGRES_DB, and POSTGRES_USER** 
+    ```shell
+    FROM postgres:latest
+    
+    # Set the superuser password for PostgreSQL
+    ENV POSTGRES_PASSWORD =  # Chosen Password
+    
+    # Create a new database
+    ENV POSTGRES_DB = # Chosen Database Name
+    
+    # Creating PG user
+    ENV POSTGRES_USER = # Chosen PG user
+    ```
+2. Build the Docker image by running the following command: 
+```dockerfile
+docker build -t togarjsdatabase -f config/dockerfile.yaml .
+```
+3. Start a Docker container from the image with the following command:
+``` dockerfile
+docker run --name anynameofchoice -p 5432:5432 -d togarjsdatabase
+```
+4. Verify that the container is running by running the following command:
+``` dockerfile
+docker ps 
+```
+5. You've created the database and can move on to the .env template.
 
 ### Creating Local .env File
 The following command will create the
 ```shell
 cp .env.template .env
 ```
-The .env.template is a template for all of the enviroment variables used in the project, once you've created your database you can begin to fill these values in. Here is the file structure with the noted values:
+The .env.template is a template for all the environment variables used in the project, once you've created your database you can begin to fill these values in. Here is the file structure with the notes for each value:
 ```python
   SESSION_SECRET = "" # This can be any value you wish
-  DB_HOST = "" # This is the name of DB from above
-  DB_USER = "" # This will be the value from the dockerfile for the user
-  DB_PASSWORD = "" # This will be the value of the dockerfile
-  DB_NAME = "" # This will be the name of the DB you've chosen in the dockerfile
+  DB_HOST = "" # dockerfile.yaml value: POSTGRES_DB
+  DB_USER = "" # dockerfile.yaml value: POSTGRES_USER
+  DB_PASSWORD = "" # dockerfile.yaml value: POSTGRES_PASSWORD
+  DB_NAME = "togarjsdatabase" 
 ```
-
+### Running the application
+We have now reached the position of starting the application, verify you database instance is running and start the application using:
+``` shell
+node app.js
+```
 ## Contributing
 ## Troubleshooting
 ## Documentation
+### PlantUML
+
 ## Notes
 
 
