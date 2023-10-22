@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 const LocalStrategy = require("passport-local").Strategy;
 const database = require('../models/');
 const User = database.users;
@@ -5,39 +6,41 @@ const where = database.Sequelize.where;
 const Op = database.Sequelize.Op;
 var passport = require('passport');
 
+// Configure Passport to use a local strategy for authentication
 passport.use('local', new LocalStrategy({usernameField:'username',passwordField:'username'}
-,function (req , username, done) {
-    User.findOne({where:
-            {username: username }})
-        .then(function (user) { // successful query to database
-            console.log(user)
-            if (user == null) {
-                console.log("Invalid Username");
-                done(null, false);
-            } else {
-                console.log("Passing user");
-                done(null, user);
-            }
-        })
-        .catch(function (err) { // something went wrong with query to db
-            done(err);
-        });
-}));
+    ,function (req , username, done) {
+        // Find a user in the database based on the provided username
+        User.findOne({where:
+                {username: username }})
+            .then(function (user) { // Handle successful query to the database
+                console.log(user)
+                // If no user is found, indicate invalid username
+                if (user == null) {
+                    console.log("Invalid Username");
+                    done(null, false);
+                } else { // Pass the user object if found
+                    console.log("Passing user");
+                    done(null, user);
+                }
+            })
+            .catch(function (err) { // Handle errors that occur during the database query
+                done(err);
+            });
+    }));
 
-// serialize session, only store user id in the session information
+// Serialize user data to store in the session (stores user id)
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
-// from the user id, figure out who the user is...
+// Deserialize user data from the session (retrieves user information from user id)
 passport.deserializeUser(function (userId, done) {
+    // Find user in the database based on the stored user id
     User
         .findOne({where: {id: userId}})
-        .then(function (user) {
+        .then(function (user) { // Handle successful query and return user data
             done(null, user);
-        }).catch(function (err) {
+        }).catch(function (err) { // Handle errors that occur during the database query
         done(err, null);
     });
 });
-
-

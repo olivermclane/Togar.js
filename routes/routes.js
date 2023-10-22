@@ -8,9 +8,7 @@ const { registerUserView,
         loginUser
 } = require("../controllers/login.controller.js");
 
-const {
-        togarView
-} = require("../controllers/togar.controller.js")
+const {togarView} = require("../controllers/togar.controller.js")
 
 const { protectRoute } = require("../auth/protectRoutes");
 const {togarUploadImage} = require("../controllers/togar.controller");
@@ -35,7 +33,9 @@ router.post("/togar/upload", togarUploadImage)
 //LOGOUT ROUTING
 router.get('/logout', function(req, res, next){
         req.logout(function(err) {
-                if (err) { return next(err); }
+                if (err) {
+                        return next(err);
+                }
                 res.redirect('/login');
         });
 });
