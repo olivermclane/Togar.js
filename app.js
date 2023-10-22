@@ -33,6 +33,15 @@ app.use(cors(corsOptions));
 database.connection.sync();
 app.use(express.json());
 
+// Serve CSS files from the 'views/static/css' directory
+app.use('/static/css', express.static(path.join(__dirname, 'views/static/css')));
+
+// Serve JavaScript files from the 'views/static/scripts' directory
+app.use('/static/scripts', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/javascript');
+    next();
+}, express.static(path.join(__dirname, 'views/static/scripts')));
+
 app.use(express.urlencoded({extended: true}));
 app.use(
     // Sessions info
