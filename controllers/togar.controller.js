@@ -1,10 +1,11 @@
+// Import necessary modules and dependencies
 require('../config/multer.config')
 const {upload} = require("../config/multer.config");
 const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs'); // Node.js file system module for file operations
+const path = require('path'); // Node.js path module for working with file paths
 
-
+//function for GET method to display images for a user
 const togarView = (req, res) => {
     const userUploadsPath = path.join(__dirname, `../uploads/${req.user.id}`);
 
@@ -18,11 +19,12 @@ const togarView = (req, res) => {
         // Create an array of image URLs
         const imageUrls = files.map(file => `/uploads/${req.user.id}/${file}`);
 
-        // Render your view (assuming you're using a templating engine like EJS)
+        // Render your view
         res.render('togar', { user: req.user, images: imageUrls });
     });
 };
 
+//Function for POST Method to handle an upload from a user
 const togarUploadImage = (req, res) => {
     console.log(req.file);
     upload.single('imageFile')(req, res, function (err) {
@@ -40,6 +42,7 @@ const togarUploadImage = (req, res) => {
     });
 };
 
+// Export functions for use in other parts of the application
 module.exports = {
     togarView,
     togarUploadImage
