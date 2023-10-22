@@ -52,10 +52,10 @@ docker run --name anynameofchoice -p 5432:5432 -d togarjsdatabase
 ``` dockerfile
 docker ps 
 ```
-5. You've created the database and can move on to the .env template.
+5. You've created the database and can move on to the .env template changes.
 
 ### Creating Local .env File
-The following command will create the
+The following command will take the .env.template and convert it to our .env file:
 ```shell
 cp .env.template .env
 ```
