@@ -72,6 +72,7 @@ We have now reached the position of starting the application, verify you databas
 ``` shell
 node app.js
 ```
+Now visit **http://localhost:3000**.
 ## Contributing
 ## Troubleshooting
 ## Documentation
