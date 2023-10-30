@@ -14,8 +14,7 @@ const protectRoute = (req, res, next) => {
 const allowRoute = (req, res, next) => {
     // Check if the user is not authenticated.
     if (!req.isAuthenticated()) {
-        // If not authenticated, allow the request to proceed to the next middleware or route handler.
-        return next();
+        // If not authenticated, allow the request to proceed to the next middleware or route handler
     }
     // If authenticated, redirect the user to a specified page, in this case, '/togar'.
     res.redirect('/togar');
