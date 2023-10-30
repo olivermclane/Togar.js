@@ -11,6 +11,9 @@ const DatabaseCon = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD,
         min: dbConfig.pool.min,
         acquire: dbConfig.pool.acquire,
         idle: dbConfig.pool.idle
+    },
+    define: {
+        underscored: true,
     }
 });
 
@@ -20,4 +23,10 @@ database.Sequelize = Sequelize;
 database.connection = DatabaseCon;
 
 database.users = require('./user.model.js')(database.connection, database.Sequelize);
+database.userimage = require('./userImage.model.js')(database.connection, database.Sequelize);
+database.users.hasMany(database.userimage, {as: 'images'});
+database.userimage.belongsTo(database.users, {
+    as: "login"
+})
+
 module.exports = database;
