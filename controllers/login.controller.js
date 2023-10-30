@@ -35,19 +35,44 @@ async function findUserByUsername(username) {
 }
 
 // Render the register view for user registration
+/**
+ * @api {get} /register Loads user creation page
+ * @apiName LoadUserPage
+ * @apiGroup User
+ */
 const registerUserView = (req, res) => {
     const errors = {}; // Flash messages containing errors set using express-flash
     res.render("register", { errors });
 };
 
-// Handle user registration logic
+/**
+ * @api {post} /register Request for user creation
+ * @apiName CreateUser
+ * @apiGroup User
+ *
+ * @apiParam {String} username The username of the user you intend to create.
+ *
+ * @apiSuccessExample {html} Success-Response:
+ *     HTTP/1.1 201 Created
+ *     Location: /login
+ *
+ * @apiErrorExample {html} Error-Response:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "error": "Invalid username format."
+ *     }
+ *     HTTP/1.1 501 Entry Exist
+ *     {
+ *       "error": "Registration Error: Username is taken"
+ *     }
+ */
 const registerUser = (req, res) => {
     const { username } = req.body;
     const errors = [];
 
     const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/;
     if (!username || !username.match(usernameRegex)) {
-        errors.push("Username must be 3 to 16 characters long and can only contain letters, numbers, underscores, and hyphens.");
+        errors.push("Invalid username format.");
     }
 
     // Check if the username already exists in the database
@@ -55,7 +80,7 @@ const registerUser = (req, res) => {
         if (user) {
             // If user already exists, send an error response
             errors.push("Registration Error: Username is taken");
-            logger.error(`User creation failed: Account already exists with username: ${username}`);
+            logger.warn(`User creation failed: Account already exists with username: ${username}`);
             res.status(501).render("register", { errors });
         } else if (errors.length > 0) {
             // If there are validation errors, send an error response with validation messages
@@ -77,36 +102,85 @@ const registerUser = (req, res) => {
                 .catch((err) => {
                     // Handle database errors if user creation fails
                     logger.error(`User creation failed due to database error: ${err.message}`);
-                    res.status(500).send("Internal Server Error");
+                    res.status(500).send("Internal Server Error - Contact Admin");
                 });
         }
     });
 };
 
-// Render the login view for user login
-const loginUserView = (req ,res) => {
-    res.render("login", {});
+/**
+ * @api {get} /login Loads user login page
+ * @apiName LoadLoginPage
+ * @apiGroup User
+ *
+ */
+const loginUserView = (req, res) => {
+    const errors = [];
+    res.render("login", {errors});
 };
 
-// Handle user login logic
+/**
+ * @api {post} /login Request for user login
+ * @apiName LoginUser
+ * @apiGroup User
+ *
+ * @apiParam {String} username The username of the user you intend to log in.
+ *
+ * @apiSuccessExample {html} Success-Response:
+ *     HTTP/1.1 302 Found
+ *     Location: /togar
+ *
+ * @apiErrorExample {html} Error-Response:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "errors": [
+ *         "Please provide a valid username."
+ *       ]
+ *     }
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       "message": "Internal Server Error"
+ *     }
+ */
 const loginUser = (req, res, next) => {
-    const {username} = req.body;
-    if (!username) {
-        // If username is not provided, render the login view with an error message
-        console.log("Please provide all the valid fields: (username)");
-        res.render("login", {
-            username,
+    const { username } = req.body;
+    const errors = [];
+    //Confirming the entered username matches our schema
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/;
+
+    if (!username || !username.match(usernameRegex)) {
+        errors.push("Please provide a valid username.");
+    }
+
+    if (errors.length > 0) {
+        // Log validation errors using Pino
+        errors.forEach(error => {
+            logger.error(`User login validation error: ${error}`);
         });
+
+        // Send error response with validation errors in the 'errors' field
+        res.status(400).render("/login{", {errors} );
     } else {
         // If username is provided, authenticate the user using Passport.js local strategy
-        console.log("Authentication started");
-        passport.authenticate("local", {
-            // Redirect to '/togar' on successful login, otherwise redirect to '/login'
-            successRedirect: "/togar",
-            failureRedirect: "/login",
-            // Enable flash messages for authentication failures
-            failureFlash: true
-        })(req,res,next);
+        passport.authenticate("local", (err, user) => {
+            if (err) {
+                // Log errors using Pino
+                logger.error(`User login failed due to database error: ${err.message}`);
+                return res.status(500).render("login", {errors});
+            }
+            if (!user) {
+                // Log invalid username using Pino
+                logger.error(`User login failed: Invalid username - ${username}`);
+                errors.push("Please provide a valid username.")
+                // Send error response indicating invalid username
+                return res.status(400).render("login", {errors});
+            }
+
+            // Log successful login using Pino
+            logger.info(`User login successful: username - ${username}`);
+            // Redirect to '/togar' on successful login
+            return res.redirect("/togar");
+        })(req, res, next);
     }
 };
 

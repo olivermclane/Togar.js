@@ -13,13 +13,10 @@ passport.use('local', new LocalStrategy({usernameField:'username',passwordField:
         User.findOne({where:
                 {username: username }})
             .then(function (user) { // Handle successful query to the database
-                console.log(user)
                 // If no user is found, indicate invalid username
                 if (user == null) {
-                    console.log("Invalid Username");
                     done(null, false);
                 } else { // Pass the user object if found
-                    console.log("Passing user");
                     done(null, user);
                 }
             })

@@ -5,12 +5,34 @@ const fs = require('fs'); // Node.js file system module for file operations
 const path = require('path');
 const sharp = require("sharp");
 const database = require("../models"); // Node.js path module for working with file paths
-
-const togarUploadImage = upload.single('imageFile');
 const userImages = database.userimage;
+const logger = require("../config/logger");
 
 
-//Function for GET method to display images for a user, converts images to base64 and passes them to the frontend UI.
+/**
+ * @api {get} /togar Loads togar page for user
+ * @apiName ViewImage
+ * @apiGroup Image Handling
+ *
+ * @apiParam sessionid A session ID created using our special key word.
+ *
+ * @apiError error Internal sever error occured or invalid file type.
+ * @apiErrorExample {html}
+ *     HTTP/1.1 401 Not Found
+ *     {
+ *         "error": "Issue reading files or internal server error"
+ *     }
+ *
+ *
+ * @apiSuccess user The user we are currently viewing images of.
+ * @apiSuccess images The base64 version of the images in list format.
+ * @apiSuccessExample {html}
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "user": username
+ *          "images": base64images
+ *      }
+ */
 const togarView = (req, res) => {
     const userUploadsPath =  path.join(process.env.IMAGE_DIRECTORY, String(req.user.id));
 
@@ -18,7 +40,7 @@ const togarView = (req, res) => {
     fs.readdir(userUploadsPath, (err, files) => {
         if (err) {
             console.error('Error reading files:', err);
-            return res.status(500).json({ error: 'Internal Server Error' });
+            return res.status(401).json({ error: 'Internal Server Error' });
         }
 
         // Array to store base64-encoded images
@@ -53,6 +75,7 @@ const processImage = async (req, res) => {
             width: metadata.width,
             height: metadata.height,
             login_id: req.user.id,
+
         };
 
         // Create database entry
@@ -65,22 +88,29 @@ const processImage = async (req, res) => {
             console.error('Error deleting file:', error);
         }
 
-        res.redirect("/togar");
+        res.status(200).redirect("/togar");
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(401).json({ error: 'Internal server error' });
     }
 };
 
-
+/**
+ * @api {post} /togar/upload Request for uploading user image
+ * @apiName UploadImage
+ * @apiGroup Image Handling
+ *
+ * @apiParam file The file of the image you intend to upload to filesystem.
+ * @apiParam username The username for the user the image belongs to.
+ */
 const togarUploadImageHandler = (req, res) => {
     upload.single('imageFile')(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             // Handle Multer errors (e.g., file size limit exceeded)
-            return res.status(400).json({ message: 'Multer Error: ' + err.message });
+            return res.status(400).render("togar",{ message: 'Multer Error: ' + err.message });
         } else if (err) {
             // Handle other errors
-            return res.status(500).json({ message: 'Internal Server Error' + err.message });
+            return res.status(500).render("togar",{ message: 'Internal Server Error' + err.message });
         }
 
         // Process the image

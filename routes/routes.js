@@ -12,12 +12,12 @@ const { registerUserView,
 const {togarView} = require("../controllers/togar.controller.js")
 
 const { protectRoute } = require("../auth/protectRoutes");
-const {togarUploadImage, togarUploadImageHandler} = require("../controllers/togar.controller");
+const { togarUploadImageHandler} = require("../controllers/togar.controller");
 const multerUpload = require('../config/multer.config');
 
 
 const router = express.Router();
-// "/" REDIRECT
+// "/" REDIRECT -- This will need work the protect route only redirects if the token is not valid.
 router.get("/", protectRoute)
 
 

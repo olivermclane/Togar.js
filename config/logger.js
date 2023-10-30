@@ -1,7 +1,9 @@
 const pino = require('pino'); // Pino module instance to allow us to create loggers in the application.
 const fs = require('fs');
 const logStream = fs.createWriteStream('/Users/olivermclane/Desktop/Togar.js/logs/app.log', { flags: 'a' });
-
+logStream.on('error', (err) => {
+    console.error('Error creating log stream:', err);
+});
 
 const logger = pino({
     level: process.env.LOG_LEVEL || 'info',
