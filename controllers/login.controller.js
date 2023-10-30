@@ -3,6 +3,9 @@ const database = require('../models/');
 const passport = require("passport");
 const fs = require('fs'); // Node.js file system module for file operations
 const path = require('path'); // Node.js path module for working with file paths
+const flash = require('express-flash');
+
+const logger = require("../config/logger");
 
 // Access the User model from the database
 const User = database.users;
@@ -10,7 +13,7 @@ const User = database.users;
 // Function to create a directory for user uploads
 const createUserDirectory = (userId) => {
     // Define the path for user uploads directory based on user ID
-    const userUploadsPath = path.join(__dirname, `../uploads/${userId}`);
+    const userUploadsPath =  path.join(process.env.IMAGE_DIRECTORY, String(userId));
 
     // Check if the directory already exists, create it if not
     if (!fs.existsSync(userUploadsPath)) {
@@ -33,43 +36,51 @@ async function findUserByUsername(username) {
 
 // Render the register view for user registration
 const registerUserView = (req, res) => {
-    res.render("register", {});
+    const errors = {}; // Flash messages containing errors set using express-flash
+    res.render("register", { errors });
 };
 
 // Handle user registration logic
 const registerUser = (req, res) => {
     const { username } = req.body;
-    if (!username) {
-        // If username is not provided, send an error response
-        res.status(409).send("Fields Left Blank");
-        console.log("Registration Fields Left Empty");
-    } else {
-        // Check if the username already exists in the database
-        findUserByUsername(username).then((user) => {
-            if (user) {
-                // If user already exists, send an error response
-                res.status(409).send("User Creation Failed: Username Already Exists");
-                console.log("Account already exists with:" + username);
-            } else {
-                // If username is unique, create a new user in the database
-                const newUser = {
-                    username: username,
-                };
-                User.create(newUser)
-                    .then((createdUser) => {
-                        // Create a directory for the new user's uploads
-                        createUserDirectory(createdUser.id);
-                        // Redirect to the login page after successful registration
-                        res.status(201).redirect("/login");
-                    })
-                    .catch((err) => {
-                        // Handle database errors if user creation fails
-                        console.log(err);
-                        res.status(500).send("Internal Server Error");
-                    });
-            }
-        });
+    const errors = [];
+
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/;
+    if (!username || !username.match(usernameRegex)) {
+        errors.push("Username must be 3 to 16 characters long and can only contain letters, numbers, underscores, and hyphens.");
     }
+
+    // Check if the username already exists in the database
+    findUserByUsername(username).then((user) => {
+        if (user) {
+            // If user already exists, send an error response
+            errors.push("Registration Error: Username is taken");
+            logger.error(`User creation failed: Account already exists with username: ${username}`);
+            res.status(501).render("register", { errors });
+        } else if (errors.length > 0) {
+            // If there are validation errors, send an error response with validation messages
+            res.status(400).render("register", { errors });
+            logger.error(`User creation failed due to validation errors: ${errors.join(', ')}`);
+        } else {
+            // If username is unique and valid, create a new user in the database
+            const newUser = {
+                username: username,
+            };
+            User.create(newUser)
+                .then((createdUser) => {
+                    // Create a directory for the new user's uploads
+                    createUserDirectory(createdUser.id);
+                    // Redirect to the login page after successful registration
+                    res.status(201).redirect("/login");
+                    logger.info(`User created successfully: username - ${username}`);
+                })
+                .catch((err) => {
+                    // Handle database errors if user creation fails
+                    logger.error(`User creation failed due to database error: ${err.message}`);
+                    res.status(500).send("Internal Server Error");
+                });
+        }
+    });
 };
 
 // Render the login view for user login

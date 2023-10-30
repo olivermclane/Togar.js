@@ -1,7 +1,7 @@
 //Allows us to set request to only be allowed from our set origins.
 const cors = require('cors');
-const flash = require("express-flash");
-
+const flash = require("express-flash"); // Allows flashing on requests in express
+const logger = require("./config/logger")
 
 const path = require('path');
 
@@ -64,5 +64,5 @@ app.use("/", require("./routes/routes"));
 
 
 // Started Server
-app.listen(PORT, console.log("Server started on port:  " + PORT));
+app.listen(PORT, logger.info("Server started on port:  " + PORT));
 

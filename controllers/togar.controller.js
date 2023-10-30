@@ -1,13 +1,18 @@
 // Import necessary modules and dependencies
-require('../config/multer.config')
-const {upload} = require("../config/multer.config");
+const { upload} = require("../config/multer.config");
 const multer = require('multer');
 const fs = require('fs'); // Node.js file system module for file operations
-const path = require('path'); // Node.js path module for working with file paths
+const path = require('path');
+const sharp = require("sharp");
+const database = require("../models"); // Node.js path module for working with file paths
+
+const togarUploadImage = upload.single('imageFile');
+const userImages = database.userimage;
+
 
 //Function for GET method to display images for a user, converts images to base64 and passes them to the frontend UI.
 const togarView = (req, res) => {
-    const userUploadsPath = path.join(__dirname, `../uploads/${req.user.id}`);
+    const userUploadsPath =  path.join(process.env.IMAGE_DIRECTORY, String(req.user.id));
 
     // Read files from the user's uploads directory
     fs.readdir(userUploadsPath, (err, files) => {
@@ -35,23 +40,57 @@ const togarView = (req, res) => {
 };
 
 //Function for POST Method to handle an upload from a user. Using multer the images are saved to a local directory.
-const togarUploadImage = (req, res) => {
+const processImage = async (req, res) => {
+    try {
+        const imagePath = path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), req.file.originalname);
+        const metadata = await sharp(imagePath).metadata();
+
+        const userimage = {
+            image_name: req.file.originalname,
+            extension: path.extname(req.file.originalname),
+            location: path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), "/"),
+            image_size: req.file.size,
+            width: metadata.width,
+            height: metadata.height,
+            login_id: req.user.id,
+        };
+
+        // Create database entry
+        await userImages.create(userimage);
+
+        // Clean up: Delete the temporary uploaded image
+        try {
+            await fsPromises.unlink(imagePath); // Use fsPromises.unlink for asynchronous file deletion
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        }
+
+        res.redirect("/togar");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+const togarUploadImageHandler = (req, res) => {
     upload.single('imageFile')(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             // Handle Multer errors (e.g., file size limit exceeded)
             return res.status(400).json({ message: 'Multer Error: ' + err.message });
         } else if (err) {
             // Handle other errors
-            return res.status(500).json({ message: 'Internal Server Error' + err.message});
+            return res.status(500).json({ message: 'Internal Server Error' + err.message });
         }
 
-        // File uploaded successfully, req.file contains the file details
-        res.redirect("/togar");
+        // Process the image
+        processImage(req, res);
     });
 };
+
 
 // Export functions for use in other parts of the application
 module.exports = {
     togarView,
-    togarUploadImage
+    togarUploadImageHandler
 }

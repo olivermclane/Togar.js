@@ -23,6 +23,17 @@
                         <div class="form-group text-center">
                             <button type="submit" class="btn btn-red btn-block">Register</button>
                             <a href="/Login"> Already a user? Login here!</a>
+
+                            <!-- Display validation errors below the register button -->
+                            <% if (errors && errors.length > 0) { %>
+                                <div class="mt-2 text-danger d-flex flex-column align-items-center">
+                                    <ul class="list-unstyled">
+                                        <% errors.forEach(function(error) { %>
+                                            <li><%= error %></li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            <% } %>
                         </div>
                     </form>
                 </div>
