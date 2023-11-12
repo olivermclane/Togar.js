@@ -66,47 +66,48 @@ const registerUserView = (req, res) => {
  *       "error": "Registration Error: Username is taken"
  *     }
  */
-const registerUser = (req, res) => {
+const registerUser = async (req, res) => {
     const { username } = req.body;
-    const errors = [];
-
     const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/;
+
     if (!username || !username.match(usernameRegex)) {
-        errors.push("Invalid username format.");
+        const errors = "Invalid username format.";
+        logger.error(`User creation failed due to validation errors: ${errors}`);
+        // If there are validation errors, send an error response with validation messages
+        res.status(400).render("register", { errors });
+        return;
     }
 
-    // Check if the username already exists in the database
-    findUserByUsername(username).then((user) => {
+    try {
+        // Check if the username already exists in the database
+        const user = await findUserByUsername(username);
         if (user) {
             // If user already exists, send an error response
-            errors.push("Registration Error: Username is taken");
+            const errors = "Registration Error: Username is taken";
             logger.warn(`User creation failed: Account already exists with username: ${username}`);
-            res.status(501).render("register", { errors });
-        } else if (errors.length > 0) {
-            // If there are validation errors, send an error response with validation messages
-            res.status(400).render("register", { errors });
-            logger.error(`User creation failed due to validation errors: ${errors.join(', ')}`);
+            res.status(302).render("register", { errors });
         } else {
             // If username is unique and valid, create a new user in the database
             const newUser = {
                 username: username,
             };
-            User.create(newUser)
-                .then((createdUser) => {
-                    // Create a directory for the new user's uploads
-                    createUserDirectory(createdUser.id);
-                    // Redirect to the login page after successful registration
-                    res.status(201).redirect("/login");
-                    logger.info(`User created successfully: username - ${username}`);
-                })
-                .catch((err) => {
-                    // Handle database errors if user creation fails
-                    logger.error(`User creation failed due to database error: ${err.message}`);
-                    res.status(500).send("Internal Server Error - Contact Admin");
-                });
+
+            const createdUser = await User.create(newUser);
+            const user = await findUserByUsername(username);
+            // Create a directory for the new user's uploads
+            createUserDirectory(createdUser.id);
+
+            // Redirect to the login page after successful registration
+            logger.info(`User created successfully: username - ${username}`);
+            res.status(201).redirect("login");
         }
-    });
+    } catch (err) {
+        // Handle database errors if user creation fails
+        logger.error(`User creation failed due to database error: ${err.message}`);
+        res.status(500).send("Internal Server Error - Contact Admin");
+    }
 };
+
 
 /**
  * @api {get} /login Loads user login page
@@ -133,9 +134,7 @@ const loginUserView = (req, res) => {
  * @apiErrorExample {html} Error-Response:
  *     HTTP/1.1 400 Bad Request
  *     {
- *       "errors": [
- *         "Please provide a valid username."
- *       ]
+ *       "errors": "Please provide a valid username."
  *     }
  *     HTTP/1.1 500 Internal Server Error
  *     {
@@ -159,27 +158,13 @@ const loginUser = (req, res, next) => {
         });
 
         // Send error response with validation errors in the 'errors' field
-        res.status(400).render("/login{", {errors} );
+        res.status(400).render("login", {errors} );
     } else {
         // If username is provided, authenticate the user using Passport.js local strategy
-        passport.authenticate("local", (err, user) => {
-            if (err) {
-                // Log errors using Pino
-                logger.error(`User login failed due to database error: ${err.message}`);
-                return res.status(500).render("login", {errors});
-            }
-            if (!user) {
-                // Log invalid username using Pino
-                logger.error(`User login failed: Invalid username - ${username}`);
-                errors.push("Please provide a valid username.")
-                // Send error response indicating invalid username
-                return res.status(400).render("login", {errors});
-            }
-
-            // Log successful login using Pino
-            logger.info(`User login successful: username - ${username}`);
-            // Redirect to '/togar' on successful login
-            return res.redirect("/togar");
+        passport.authenticate("local", {
+                successRedirect: "togar",
+                failureRedirect: "login",
+                failureFlash: true
         })(req, res, next);
     }
 };
@@ -189,5 +174,6 @@ module.exports = {
     registerUserView,
     registerUser,
     loginUserView,
-    loginUser
+    loginUser,
+    findUserByUsername
 };

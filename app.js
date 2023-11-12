@@ -62,7 +62,7 @@ app.use('/uploads', express.static('uploads'));
 // Applying Routes
 app.use("/", require("./routes/routes"));
 
-
+module.exports = app;
 // Started Server
 app.listen(PORT, logger.info("Server started on port:  " + PORT));
 
