@@ -75,18 +75,10 @@ const processImage = async (req, res) => {
             width: metadata.width,
             height: metadata.height,
             login_id: req.user.id,
-
         };
 
         // Create database entry
         await userImages.create(userimage);
-
-        // Clean up: Delete the temporary uploaded image
-        try {
-            await fsPromises.unlink(imagePath); // Use fsPromises.unlink for asynchronous file deletion
-        } catch (error) {
-            console.error('Error deleting file:', error);
-        }
 
         res.status(200).redirect("/togar");
     } catch (error) {
