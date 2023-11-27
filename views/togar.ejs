@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="static/css/togarstyle.css">
     <script src="static/scripts/image-gallery.js"></script>
+    <script src="static/scripts/preview-image.js"></script>
+
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -45,13 +47,14 @@
             </div>
             <p class="mt-5">Below you can upload image files (.jpg and .png)</p>
             <div class="upload">
-                <form method="POST" action="/togar/upload" enctype="multipart/form-data">
+                <form method="POST" action="/togar/upload" enctype="multipart/form-data" id="uploadForm">
                     <div class="form-group">
-                        <input type="file" name="imageFile" class="form-control-file"/>
+                        <input type="file" name="imageFile" class="form-control-file" id="fileInput" onchange="previewImage()"/>
                     </div>
                     <button type="submit" class="btn btn-primary">Upload</button>
                 </form>
             </div>
+            <img id="imagePreview" alt="Select Image to Preview">
         </div>
     </div>
 </div>

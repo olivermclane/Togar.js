@@ -21,6 +21,11 @@ body {
 
 
 }
+#imagePreview {
+    max-width: 30%;
+    height: auto;
+    margin-top: 10px;
+}
 
 nav {
     margin-bottom: 20px;
