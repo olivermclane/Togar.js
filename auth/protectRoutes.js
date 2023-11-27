@@ -1,3 +1,4 @@
+const logger = require('../config/logger');
 // Middleware function to protect routes from unauthorized access.
 const protectRoute = (req, res, next) => {
     // Check if the user is authenticated.
@@ -6,7 +7,7 @@ const protectRoute = (req, res, next) => {
         return next();
     }
     // If not authenticated, log a message and redirect the user to the login page.
-    console.log('Please log in to continue');
+    logger.info('User access without token', req);
     res.redirect('/login');
 };
 
@@ -15,8 +16,10 @@ const allowRoute = (req, res, next) => {
     // Check if the user is not authenticated.
     if (!req.isAuthenticated()) {
         // If not authenticated, allow the request to proceed to the next middleware or route handler
+        return next();
     }
     // If authenticated, redirect the user to a specified page, in this case, '/togar'.
+    logger.info('User retain previous access using token', req);
     res.redirect('/togar');
 };
 

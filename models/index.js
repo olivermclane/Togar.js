@@ -5,7 +5,6 @@ const Sequelize = require("sequelize");
 const DatabaseCon = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
     dialect: dbConfig.dialect,
-    operatorsAliases: false,
     logging : msg => logger.debug(msg),
 
     pool: {
