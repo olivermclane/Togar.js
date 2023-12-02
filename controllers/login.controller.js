@@ -76,9 +76,10 @@ const registerUser = async (req, res) => {
 
     if (!username || !username.match(usernameRegex)) {
         const errors = "Invalid username format.";
-        logger.error(`User creation failed due to validation errors: ${errors}`, req);
+        logger.error(`User creation failed due to validation errors: ${errors}`);
         // If there are validation errors, send an error response with validation messages
         res.status(400).render("register", { errors });
+        return;
     }
 
     try {
@@ -87,7 +88,7 @@ const registerUser = async (req, res) => {
         if (user) {
             // If user already exists, send an error response
             const errors = "Username is taken.";
-            logger.warn(`User creation failed: Account already exists with username: ${username}`, req);
+            logger.warn(`User creation failed: Account already exists with username: ${username}`);
             res.status(409).render("register", { errors });
         } else {
             // If username is unique and valid, create a new user in the database

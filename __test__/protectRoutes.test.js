@@ -41,7 +41,7 @@ describe('Middleware Tests', () => {
             expect(res.redirect).not.toHaveBeenCalled();
         });
 
-        test('Redirect Authenticated users to /togar', async () => {
+        test('Redirect Authenticated users to the /togar', async () => {
             const req = { isAuthenticated: () => true };
             const res = { redirect: jest.fn() };
             const next = jest.fn();

@@ -7,7 +7,7 @@ const transports = pino.transport({
         {
             target: "pino/file",
             options: {
-                destination: '/Users/olivermclane/Desktop/Togar.js/logs/app.log'
+                destination: 'logs/app.log'
             },
         } // File logging
     ]

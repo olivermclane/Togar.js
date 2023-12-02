@@ -5,6 +5,16 @@ const logger = require("./config/logger")
 
 const path = require('path');
 
+//cookie parser
+const cookieParser = require("cookie-parser");
+
+//CRSF protection
+const csrf = require('lusca').csrf;
+
+
+// Rate limiter for requests
+const ratelimiter = require('./config/ratelimiter.js')
+
 //Express packages
 const express = require('express');
 const session = require('express-session');
@@ -42,26 +52,28 @@ app.use('/static/scripts', (req, res, next) => {
     next();
 }, express.static(path.join(__dirname, 'views/static/scripts')));
 
+app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 app.use(
     // Sessions info
     session({
         secret: process.env.SESSION_SECRET,
         saveUninitialized: true,
-        resave: true
+        resave: true,
+        cookie: { maxAge: 60000 },
     }),
     // Applying Passport
     passport.initialize(),
     passport.session(),
     flash()
 );
-
+app.use(csrf());
 
 app.use('/uploads', express.static('uploads'));
+app.use(ratelimiter);
 
 // Applying Routes
 app.use("/", require("./routes/routes"));
-
 module.exports = app;
 // Started Server
 app.listen(PORT, logger.info("Server started on port:  " + PORT));

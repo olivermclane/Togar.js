@@ -35,12 +35,11 @@ const logger = require("../config/logger");
  */
 const togarView = (req, res) => {
     const userUploadsPath =  path.join(process.env.IMAGE_DIRECTORY, String(req.user.id));
-
     // Read files from the user's uploads directory
     fs.readdir(userUploadsPath, (err, files) => {
         if (err) {
-            console.error('Error reading files:', err);
-            return res.status(401).json({ error: 'Internal Server Error' });
+            logger.error('Error reading/uploading files:', err);
+            return res.render('togar');
         }
 
         // Array to store base64-encoded images
@@ -63,27 +62,31 @@ const togarView = (req, res) => {
 
 //Function for POST Method to handle an upload from a user. Using multer the images are saved to a local directory.
 const processImage = async (req, res) => {
-    try {
-        const imagePath = path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), req.file.originalname);
-        const metadata = await sharp(imagePath).metadata();
+    if(req.file) {
+        try {
+            const imagePath = path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), req.file.originalname);
+            const metadata = await sharp(imagePath).metadata();
 
-        const userimage = {
-            image_name: req.file.originalname,
-            extension: path.extname(req.file.originalname),
-            location: path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), "/"),
-            image_size: req.file.size,
-            width: metadata.width,
-            height: metadata.height,
-            login_id: req.user.id,
-        };
+            const userimage = {
+                image_name: req.file.originalname,
+                extension: path.extname(req.file.originalname),
+                location: path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), "/"),
+                image_size: req.file.size,
+                width: metadata.width,
+                height: metadata.height,
+                login_id: req.user.id,
+            };
 
-        // Create database entry
-        await userImages.create(userimage);
+            // Create database entry
+            await userImages.create(userimage);
 
-        res.status(200).redirect("/togar");
-    } catch (error) {
-        console.error(error);
-        res.status(401).json({ error: 'Internal server error' });
+            res.status(200).redirect("/togar");
+        } catch (error) {
+            console.error(error);
+            res.status(401).json({error: 'Internal server error'});
+        }
+    }else{
+        res.status(401).redirect('/togar');
     }
 };
 

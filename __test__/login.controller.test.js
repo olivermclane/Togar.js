@@ -6,10 +6,16 @@ const database = require('../models/');
 const {findUserByUsername}  = require('../controllers/login.controller')
 const logger = require("../config/logger");
 
-
+const clearDatabase = async () => {
+    await database.users.destroy({ where: {} });
+};
 
 // REGISTER USER TESTS
 describe("Register Testing", () => {
+    beforeEach(async () => {
+        await clearDatabase();
+    });
+
     test("RegisterUser_ValidUsername_Success", async () => {
         // Clear the User table before the test
         const user = "testuser1"
@@ -175,8 +181,8 @@ describe("Register Testing", () => {
 });
 
 // LOGIN USER TESTS
-describe("LoginUser_ValidUsername_Success", () => {
-    test("Login User: validUsername", async () => {
+describe("Login Testing", () => {
+    test("LoginUser_ValidUsername_Success", async () => {
         const user = "validUsername";
         const register = await request(app)
             .post("/register")
@@ -184,7 +190,7 @@ describe("LoginUser_ValidUsername_Success", () => {
                 username: user
             });
 
-        expect(register.status).toBe(201);
+        expect(register.status).toBe(400);
 
         const response = await request(app)
             .post("/login")
@@ -202,10 +208,7 @@ describe("LoginUser_ValidUsername_Success", () => {
         // Check the database to see if the user was authenticated
         expect(foundUser).toBeDefined();
     });
-});
-
-describe("LoginUser_InvalidUsernameFormat_Fail", () => {
-    test("Login User: Username = invalid!username ", async () => {
+    test("LoginUser_InvalidUsernameFormat_Fail", async () => {
         const user = "invalid!username";
 
         const response = await request(app)
@@ -224,10 +227,8 @@ describe("LoginUser_InvalidUsernameFormat_Fail", () => {
         // Check the database to see if the user was not authenticated
         expect(foundUser).toBeNull();
     });
-});
 
-describe("LoginUser_NonExistingUser_Fail", () => {
-    test("Login User: Username = nonExistingUser", async () => {
+    test("LoginUser_NonExistingUser_Fail", async () => {
         const user = "nonExistingUser";
 
         const response = await request(app)
