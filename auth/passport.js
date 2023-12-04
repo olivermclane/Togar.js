@@ -5,7 +5,7 @@ const passport = require('passport');
 const logger = require("../config/logger");
 const flash = require('express-flash');
 
-
+//Setting up our passport strategy and how it wil handle logins
 passport.use('local', new LocalStrategy({ usernameField: 'username', passwordField: 'username' },
     function (username, password, done) {
         // Find a user in the database based on the provided username

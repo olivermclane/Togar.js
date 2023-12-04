@@ -3,6 +3,7 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
+//Checks if files that are uploaded are images and will filter if they aren't
 const isImage = (file) => {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
     const ext = path.extname(file).toLowerCase();

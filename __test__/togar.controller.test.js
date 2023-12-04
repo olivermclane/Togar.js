@@ -7,7 +7,7 @@ async function findUserByUsername(username) {
     try {
         // Query the database to find users matching the provided username
         const users = await User.findAll({ where: {username: username} });
-        // Return the first user found (if any)
+        // Return the first user found
         return (users instanceof Array) ? users[0] : null;
     } catch (ex) {
         // Handle exceptions if the database query fails

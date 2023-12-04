@@ -69,9 +69,10 @@ app.use("/", require("./routes/routes"));
 app.use('/uploads', express.static('uploads'));
 // Applying Routes
 module.exports = app;
+
 // Started Server
 if (require.main === module) {
-    // This block will be executed only if this file is run directly,
+    // This block will be executed only if this file is run directly, (node app)
     // not when it's imported as a module in another file.
     app.listen(PORT, () => {
         logger.info("Server started on port:  " + PORT);

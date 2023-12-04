@@ -14,6 +14,7 @@ const transports = pino.transport({
 });
 
 const logger = pino({
+    //Setting Log Level so we can change between debug and info
     level: process.env.PINO_LOG_LEVEL || 'info',
     timestamp: pino.stdTimeFunctions.isoTime,
     },

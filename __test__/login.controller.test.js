@@ -65,7 +65,7 @@ describe("Register Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was not created
+        // Check to see if the user was not created
         expect(foundUser).toBeUndefined();
     });
 
@@ -83,7 +83,7 @@ describe("Register Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was not created
+        // Check to see if the user was not created
         expect(foundUser).toBeUndefined();
     });
 
@@ -101,7 +101,7 @@ describe("Register Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was not created
+        // Check to see if the user was not created
         expect(foundUser).toBeUndefined();
     });
 
@@ -119,7 +119,7 @@ describe("Register Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was not created
+        // Check to see if the user was not created
         expect(foundUser).toBeUndefined();
     });
 
@@ -137,7 +137,7 @@ describe("Register Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was not created
+        // Check to see if the user was not created
         expect(foundUser).toBeUndefined();
     });
 
@@ -155,7 +155,7 @@ describe("Register Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was not created
+        // Check to see if the user was not created
         expect(foundUser).toBeUndefined();
     });
 
@@ -175,7 +175,7 @@ describe("Register Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was not created
+        // Check to see if the user was not created
         expect(foundUser).toBeDefined();
     });
 
@@ -209,7 +209,7 @@ describe("Login Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was authenticated
+        // Check to see if the user was existed
         expect(foundUser).toBeDefined();
     });
     test("LoginUser_InvalidUsernameFormat_Fail", async () => {
@@ -228,7 +228,7 @@ describe("Login Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was not authenticated
+        // Check to see if the user was existed
         expect(foundUser).toBeUndefined();
     });
 
@@ -248,7 +248,7 @@ describe("Login Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        // Check the database to see if the user was not authenticated
+        // Check to see if the user was existed
         expect(foundUser).toBeUndefined();
     });
 });

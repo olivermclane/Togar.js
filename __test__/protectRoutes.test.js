@@ -20,7 +20,7 @@ describe('Middleware Tests', () => {
 
             protectRoute(req, res, next);
 
-            // Assert that res.redirect was called with the correct argument
+            // Assert that res.redirect was called with the correct redirect
             expect(res.redirect).toHaveBeenCalledWith('/login');
             // Assert that next was not called
             expect(next).not.toHaveBeenCalled();
@@ -48,7 +48,7 @@ describe('Middleware Tests', () => {
 
             allowRoute(req, res, next);
 
-            // Assert that res.redirect was called with the correct argument
+            // Assert that res.redirect was called with the correct redirect
             expect(res.redirect).toHaveBeenCalledWith('/togar');
             // Assert that next was not called
             expect(next).not.toHaveBeenCalled();
