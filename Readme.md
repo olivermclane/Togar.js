@@ -95,6 +95,7 @@ Now visit **http://localhost:3000**.
 ## Contributing
 ## Troubleshooting
 ## Documentation
+- [HTML Documentation](docs/index.html)
 
 ### PlantUML
 
