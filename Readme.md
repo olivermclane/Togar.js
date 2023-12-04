@@ -92,7 +92,6 @@ Now visit **http://localhost:3000**.
    
        c. Select * from logindata; to view user instances
    
-## Contributing
 ## Troubleshooting
 ## Documentation
 - [HTML Documentation](https://olivermclane.github.io/Togar.js/)
