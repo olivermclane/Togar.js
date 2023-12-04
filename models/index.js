@@ -1,11 +1,10 @@
 const env = process.env.NODE_ENV || 'development';
-const dbConfig = env === 'test' ? require("../config/test-db.config.js") : require("../config/db.config.js");
+const dbConfig = require("../config/db.config.js");
 const logger = require("../config/logger");
 const Sequelize = require("sequelize");
 const DatabaseCon = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
     dialect: dbConfig.dialect,
-    operatorsAliases: false,
     logging : msg => logger.debug(msg),
 
     pool: {

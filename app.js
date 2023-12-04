@@ -5,6 +5,13 @@ const logger = require("./config/logger")
 
 const path = require('path');
 
+//cookie parser
+const cookieParser = require("cookie-parser");
+
+
+// Rate limiter for requests
+const ratelimiter = require('./config/ratelimiter.js')
+
 //Express packages
 const express = require('express');
 const session = require('express-session');
@@ -42,27 +49,31 @@ app.use('/static/scripts', (req, res, next) => {
     next();
 }, express.static(path.join(__dirname, 'views/static/scripts')));
 
+app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 app.use(
     // Sessions info
     session({
         secret: process.env.SESSION_SECRET,
         saveUninitialized: true,
-        resave: true
+        resave: true,
+        cookie: { maxAge: 60000 },
     }),
     // Applying Passport
     passport.initialize(),
     passport.session(),
     flash()
 );
-
-
-app.use('/uploads', express.static('uploads'));
-
-// Applying Routes
+app.use(ratelimiter);
 app.use("/", require("./routes/routes"));
-
+app.use('/uploads', express.static('uploads'));
+// Applying Routes
 module.exports = app;
 // Started Server
-app.listen(PORT, logger.info("Server started on port:  " + PORT));
-
+if (require.main === module) {
+    // This block will be executed only if this file is run directly,
+    // not when it's imported as a module in another file.
+    app.listen(PORT, () => {
+        logger.info("Server started on port:  " + PORT);
+    });
+}

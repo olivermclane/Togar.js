@@ -41,7 +41,7 @@ async function findUserByUsername(username) {
  * @apiGroup User
  */
 const registerUserView = (req, res) => {
-    const errors = {}; // Flash messages containing errors set using express-flash
+    const errors = []; // Flash messages containing errors set using express-flash
     res.render("register", { errors });
 };
 
@@ -53,17 +53,25 @@ const registerUserView = (req, res) => {
  * @apiParam {String} username The username of the user you intend to create.
  *
  * @apiSuccessExample {html} Success-Response:
- *     HTTP/1.1 201 Created
- *     Location: /login
+ *     HTTP/1.1 302 Found
+ *     Location: /register
  *
  * @apiErrorExample {html} Error-Response:
+ *     HTTP/1.1 409 Conflict
+ *     {
+ *       "error": "Username is taken."
+ *     }
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "error": "Invalid username format."
  *     }
- *     HTTP/1.1 501 Entry Exist
+ *     HTTP/1.1 429 Too Many Requests
  *     {
- *       "error": "Registration Error: Username is taken"
+ *         "error": "Users has passed 100 req limit"
+ *     }
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       "error": "Contact Admin."
  *     }
  */
 const registerUser = async (req, res) => {
@@ -83,9 +91,9 @@ const registerUser = async (req, res) => {
         const user = await findUserByUsername(username);
         if (user) {
             // If user already exists, send an error response
-            const errors = "Registration Error: Username is taken";
+            const errors = "Username is taken.";
             logger.warn(`User creation failed: Account already exists with username: ${username}`);
-            res.status(302).render("register", { errors });
+            res.status(409).render("register", { errors });
         } else {
             // If username is unique and valid, create a new user in the database
             const newUser = {
@@ -93,18 +101,18 @@ const registerUser = async (req, res) => {
             };
 
             const createdUser = await User.create(newUser);
-            const user = await findUserByUsername(username);
             // Create a directory for the new user's uploads
             createUserDirectory(createdUser.id);
 
             // Redirect to the login page after successful registration
             logger.info(`User created successfully: username - ${username}`);
-            res.status(201).redirect("login");
+            return res.status(302).redirect("login");
         }
     } catch (err) {
         // Handle database errors if user creation fails
         logger.error(`User creation failed due to database error: ${err.message}`);
-        res.status(500).send("Internal Server Error - Contact Admin");
+        const errors = "Contact Admin.";
+        res.status(500).render("register", { errors });
     }
 };
 
@@ -140,31 +148,34 @@ const loginUserView = (req, res) => {
  *     {
  *       "message": "Internal Server Error"
  *     }
+ *     HTTP/1.1 429 Too Many Requests
+ *     {
+ *         "error": "Users has passed 100 req limit"
+ *     }
  */
-const loginUser = (req, res, next) => {
-    const { username } = req.body;
+const loginUser = async (req, res, next) => {
+    const {username} = req.body;
     const errors = [];
     //Confirming the entered username matches our schema
     const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/;
-
-    if (!username || !username.match(usernameRegex)) {
+    const user = await findUserByUsername(username);
+    if (!username || !username.match(usernameRegex) || !user) {
         errors.push("Please provide a valid username.");
     }
 
     if (errors.length > 0) {
         // Log validation errors using Pino
         errors.forEach(error => {
-            logger.error(`User login validation error: ${error}`);
+            logger.error(`User login validation error: ${error}`, req);
         });
-
         // Send error response with validation errors in the 'errors' field
-        res.status(400).render("login", {errors} );
-    } else {
+        res.status(400).render("login", {errors});
+    }else{
         // If username is provided, authenticate the user using Passport.js local strategy
         passport.authenticate("local", {
-                successRedirect: "togar",
-                failureRedirect: "login",
-                failureFlash: true
+            successRedirect: "togar",
+            failureRedirect: "login",
+            failureFlash: true
         })(req, res, next);
     }
 };
