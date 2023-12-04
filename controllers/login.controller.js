@@ -159,7 +159,6 @@ const loginUser = async (req, res, next) => {
     //Confirming the entered username matches our schema
     const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/;
     const user = await findUserByUsername(username);
-    logger.info(user);
     if (!username || !username.match(usernameRegex) || !user) {
         errors.push("Please provide a valid username.");
     }

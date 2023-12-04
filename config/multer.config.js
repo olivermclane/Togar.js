@@ -3,6 +3,11 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
+const isImage = (file) => {
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+    const ext = path.extname(file).toLowerCase();
+    return imageExtensions.includes(ext);
+};
 
 
 // Configure multer to store uploaded files on disk with specific naming and destination logic.
@@ -29,7 +34,15 @@ const storage = multer.diskStorage({
 
 // Create a multer instance with the specified storage configuration.
 const upload = multer({
-    storage: storage
+    storage: storage,
+    fileFilter: (req, file, callback) => {
+        // Check if the file is an image
+        if (isImage(file.originalname)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Invalid file type'), false);
+        }
+    },
 });
 
 // Export the configured multer instance for use in other parts of the application.

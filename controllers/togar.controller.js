@@ -67,33 +67,47 @@ const togarView = (req, res) => {
 
 //Function for POST Method to handle an upload from a user. Using multer the images are saved to a local directory.
 const processImage = async (req, res) => {
-    if(req.file) {
-        try {
-            const imagePath = path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), req.file.originalname);
-            const metadata = await sharp(imagePath).metadata();
+    if (!req.file) {
+        return res.status(400).redirect('/togar');
+    }
+    // Define a list of allowed image extensions
+    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
 
-            const userimage = {
-                image_name: req.file.originalname,
-                extension: path.extname(req.file.originalname),
-                location: path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), "/"),
-                image_size: req.file.size,
-                width: metadata.width,
-                height: metadata.height,
-                login_id: req.user.id,
-            };
+    // Get the file extension
+    const fileExtension = path.extname(req.file.originalname).toLowerCase();
 
-            // Create database entry
-            await userImages.create(userimage);
+    // Check if the file extension is in the allowed list
+    if (!allowedExtensions.includes(fileExtension)) {
+        // Log and handle the error for invalid file types
+        logger.info("User uploaded an invalid file type: " + fileExtension);
+        return res.status(415).redirect("/togar");
+    }
 
-            res.status(200).redirect("/togar");
-        } catch (error) {
-            logger.info("User uploaded a conflicting file" + error +  " Extenstion: "+ path.extname(req.file.originalname));
-            res.status(415).redirect("/togar");
-        }
-    }else{
-        res.status(400).redirect('/togar');
+    try {
+        // Process and save the image
+        const imagePath = path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), req.file.originalname);
+        const metadata = await sharp(imagePath).metadata();
+
+        const userimage = {
+            image_name: req.file.originalname,
+            extension: fileExtension,
+            location: path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), "/"),
+            image_size: req.file.size,
+            width: metadata.width,
+            height: metadata.height,
+            login_id: req.user.id,
+        };
+
+        // Create database entry
+        await userImages.create(userimage);
+
+        return res.status(302).redirect("/togar");
+    } catch (error) {
+        logger.info("Error processing the image: " + error);
+        return res.status(415).redirect("/togar");
     }
 };
+
 
 /**
  * @api {post} /togar/upload Request for uploading user image
@@ -104,7 +118,7 @@ const processImage = async (req, res) => {
  * @apiParam username The username for the user the image belongs to.
  *
  * @apiSuccessExample {html}
- *      HTTP/1.1 200 OK
+ *      HTTP/1.1 302 OK
  *      {
  *          "user": username
  *          "images": base64images
@@ -129,21 +143,25 @@ const processImage = async (req, res) => {
  *     }
  */
 const togarUploadImageHandler = (req, res) => {
-    upload.single('imageFile')(req, res, function (err) {
+    // Process the image after the Multer middleware has finished handling the file
+
+
+    upload.single('imageFile')(req, res, async function (err) {
         if (err instanceof multer.MulterError) {
             // Handle Multer errors (e.g., file size limit exceeded)
-            logger.error("Issue uploading file: " + err.message )
-            console.log(err.message)
-            return res.status(400).render("togar",{ message: 'Multer Error: ' + err.message });
+            logger.error("Issue uploading file: " + err.message)
+            return res.status(400).redirect("/togar");
         } else if (err) {
             // Handle other errors
-            return res.status(500).render("togar",{ message: 'Internal Server Error' + err.message });
+            return res.status(415).redirect("/togar");
         }
 
-        // Process the image
-        processImage(req, res);
+        // Process the image after the file upload is complete
+        await processImage(req, res);
+
     });
 };
+
 
 
 // Export functions for use in other parts of the application
