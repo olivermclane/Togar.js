@@ -95,7 +95,7 @@ Now visit **http://localhost:3000**.
 ## Contributing
 ## Troubleshooting
 ## Documentation
-- [HTML Documentation](docs/index.html)
+- [HTML Documentation](https://olivermclane.github.io/Togar.js/docs/index.html)
 
 ### PlantUML
 
