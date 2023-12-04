@@ -92,12 +92,9 @@ Now visit **http://localhost:3000**.
    
        c. Select * from logindata; to view user instances
    
-## Troubleshooting
 ## Documentation
 - [HTML Documentation](https://olivermclane.github.io/Togar.js/)
-
-### PlantUML
-
+## Troubleshooting
 ## Notes
 
 
