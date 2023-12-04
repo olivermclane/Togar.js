@@ -1,4 +1,5 @@
 # Welcome to Togar.js
+The Node.js application, incorporating Passport, Multer, Jest for testing, Pino, and Express.js, empowers users to upload images and access their image gallery. When initiating an image upload, users select the image file. If the file fails validation, the method redirects the user to the image gallery view with an associated error message. Conversely, upon successful validation, the method saves the image to the server file system and redirects the user to the image gallery view. The user's image gallery is populated by retrieving a list of image streams for the specified user through the Image service. Each image is then converted into a base64-encoded string and added to a list of image pairs that includes the image source and content type. This list is subsequently assigned to the model attribute "images" and displayed in the view. In summary, the application is a fundamental image uploading and viewing web app designed for handling multipart files within a Node.js setup, with stored images on the server file system and display capabilities on the front-end.
 
 ## Local Environment Setup
 This is a step-by-step guide on how to setup a local enviroment for Togar.js. Let get started:
@@ -65,7 +66,10 @@ The .env.template is a template for all the environment variables used in the pr
   DB_HOST = "" # dockerfile.yaml value: POSTGRES_DB
   DB_USER = "" # dockerfile.yaml value: POSTGRES_USER
   DB_PASSWORD = "" # dockerfile.yaml value: POSTGRES_PASSWORD
-  DB_NAME = "togarjsdatabase" 
+  DB_NAME = "togarjsdatabase"
+
+  IMAGE_DIRECTORY = "" # Location where images are saved from application
+
 ```
 ### Running the application
 We have now reached the position of starting the application, verify you database instance is running and start the application using:
@@ -73,9 +77,25 @@ We have now reached the position of starting the application, verify you databas
 node app.js
 ```
 Now visit **http://localhost:3000**.
-## Contributing
+
+
+### Database Operations
+1. Open a terminal prompt.
+2. Type **docker ps** and grab the container_id.
+3. Type **docker exec -it {container_id} bash**
+4. Type **psql -U postgres -d TogarData -h localhost**
+5. Dig around the database:
+
+       a. Type \dt to view avaliable tables.
+       
+       b. Select * from user_image; to view images saved by all users.
+   
+       c. Select * from logindata; to view user instances
+   
 ## Troubleshooting
 ## Documentation
+- [HTML Documentation](https://olivermclane.github.io/Togar.js/)
+
 ### PlantUML
 
 ## Notes
