@@ -6,6 +6,8 @@ const database = require('../models/');
 const {findUserByUsername}  = require('../controllers/login.controller')
 const logger = require("../config/logger");
 
+
+// HELPERS
 const clearDatabase = async () => {
     await database.users.destroy({ where: {} });
 };
@@ -15,7 +17,6 @@ describe("Register Testing", () => {
     beforeEach(async () => {
         await clearDatabase();
     });
-
     test("RegisterUser_ValidUsername_Success", async () => {
         // Clear the User table before the test
         const user = "testuser1"
@@ -26,7 +27,7 @@ describe("Register Testing", () => {
             });
 
         // Assert the HTTP response status
-        expect(response.status).toBe(201);
+        expect(response.status).toBe(302);
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was created
@@ -47,7 +48,7 @@ describe("Register Testing", () => {
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeUndefined();
     })
 
     test("RegisterUser_UsernameLength3_Fail", async () => {
@@ -65,7 +66,7 @@ describe("Register Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was not created
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeUndefined();
     });
 
     test("RegisterUser_UsernameInvalidCharacters_Fail_test.", async () => {
@@ -83,7 +84,7 @@ describe("Register Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was not created
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeUndefined();
     });
 
     test("RegisterUser_UsernameInvalidCharacters_Fail_test(", async () => {
@@ -101,7 +102,7 @@ describe("Register Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was not created
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeUndefined();
     });
 
     test("RegisterUser_UsernameInvalidCharacters_Fail_test~", async () => {
@@ -119,7 +120,7 @@ describe("Register Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was not created
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeUndefined();
     });
 
     test("RegisterUser_UsernameInvalidCharacters_Fail_test>", async () => {
@@ -137,7 +138,7 @@ describe("Register Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was not created
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeUndefined();
     });
 
     test("RegisterUser_UsernameInvalidCharacters_Fail_test|", async () => {
@@ -155,7 +156,7 @@ describe("Register Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was not created
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeUndefined();
     });
 
     test("RegisterUser_AlreadyExist_Fail", async () => {
@@ -175,13 +176,16 @@ describe("Register Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was not created
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeDefined();
     });
 
 });
 
 // LOGIN USER TESTS
 describe("Login Testing", () => {
+    beforeEach(async () => {
+        await clearDatabase();
+    });
     test("LoginUser_ValidUsername_Success", async () => {
         const user = "validUsername";
         const register = await request(app)
@@ -190,7 +194,7 @@ describe("Login Testing", () => {
                 username: user
             });
 
-        expect(register.status).toBe(400);
+        expect(register.status).toBe(302);
 
         const response = await request(app)
             .post("/login")
@@ -225,7 +229,7 @@ describe("Login Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was not authenticated
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeUndefined();
     });
 
     test("LoginUser_NonExistingUser_Fail", async () => {
@@ -245,6 +249,6 @@ describe("Login Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was not authenticated
-        expect(foundUser).toBeNull();
+        expect(foundUser).toBeUndefined();
     });
 });

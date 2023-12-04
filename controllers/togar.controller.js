@@ -18,9 +18,13 @@ const logger = require("../config/logger");
  *
  * @apiError error Internal sever error occured or invalid file type.
  * @apiErrorExample {html}
- *     HTTP/1.1 401 Not Found
+ *     HTTP/1.1 400 Bad Request
  *     {
  *         "error": "Issue reading files or internal server error"
+ *     }
+ *     HTTP/1.1 429 Too Many Requests
+ *     {
+ *         "error": "Users has passed 100 req limit"
  *     }
  *
  *
@@ -34,12 +38,13 @@ const logger = require("../config/logger");
  *      }
  */
 const togarView = (req, res) => {
+
     const userUploadsPath =  path.join(process.env.IMAGE_DIRECTORY, String(req.user.id));
     // Read files from the user's uploads directory
     fs.readdir(userUploadsPath, (err, files) => {
         if (err) {
             logger.error('Error reading/uploading files:', err);
-            return res.render('togar');
+            return res.status(400).render('togar');
         }
 
         // Array to store base64-encoded images
@@ -56,7 +61,7 @@ const togarView = (req, res) => {
         });
 
         // Render your view with base64-encoded images
-        res.render('togar', { user: req.user, images: base64Images });
+        res.status(200).render('togar', { user: req.user, images: base64Images });
     });
 };
 
@@ -82,11 +87,11 @@ const processImage = async (req, res) => {
 
             res.status(200).redirect("/togar");
         } catch (error) {
-            console.error(error);
-            res.status(401).json({error: 'Internal server error'});
+            logger.info("User uploaded a conflicting file" + error +  " Extenstion: "+ path.extname(req.file.originalname));
+            res.status(415).redirect("/togar");
         }
     }else{
-        res.status(401).redirect('/togar');
+        res.status(400).redirect('/togar');
     }
 };
 
@@ -97,11 +102,38 @@ const processImage = async (req, res) => {
  *
  * @apiParam file The file of the image you intend to upload to filesystem.
  * @apiParam username The username for the user the image belongs to.
+ *
+ * @apiSuccessExample {html}
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "user": username
+ *          "images": base64images
+ *      }
+ *
+ * @apiErrorExample {html}
+ *      HTTP/1.1 429 Too Many Requests
+ *     {
+ *         "error": "Users has passed 100 req limit"
+ *     }
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *         "error": "Internal Service - Multer Error"
+ *     }
+ *     HTTP/1.1 415 Unsupported Media Type
+ *     {
+ *         "error": "User has uploaded a invalid media type"
+ *     }
+ *    HTTP/1.1 500 Internal Server Error
+ *     {
+ *         "error": "Users has passed 100 req limit"
+ *     }
  */
 const togarUploadImageHandler = (req, res) => {
     upload.single('imageFile')(req, res, function (err) {
         if (err instanceof multer.MulterError) {
             // Handle Multer errors (e.g., file size limit exceeded)
+            logger.error("Issue uploading file: " + err.message )
+            console.log(err.message)
             return res.status(400).render("togar",{ message: 'Multer Error: ' + err.message });
         } else if (err) {
             // Handle other errors

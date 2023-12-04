@@ -4,7 +4,7 @@
   "description": "This will be the node.js version of Togar",
   "main": "app.js",
   "scripts": {
-    "test": "jest --setupFiles ./config/jest.setup.js ",
+    "test": "jest --setupFiles ./config/jest.setup.js --runInBand",
     "apidoc": "apidoc -i ./ -o docs/"
   },
   "author": "",

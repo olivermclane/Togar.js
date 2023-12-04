@@ -1,6 +1,5 @@
 
 const express =  require('express');
-const upload = require('../config/multer.config');
 
 //Controller Methods
 const { registerUserView,
@@ -13,7 +12,6 @@ const {togarView} = require("../controllers/togar.controller.js")
 
 const { protectRoute, allowRoute} = require("../auth/protectRoutes");
 const { togarUploadImageHandler} = require("../controllers/togar.controller");
-const multerUpload = require('../config/multer.config');
 
 
 const router = express.Router();
@@ -33,7 +31,7 @@ router.post('/register', registerUser)
 //TOGAR APPLICATION ROUTING
 router.get("/togar", protectRoute, togarView )
 
-router.post("/togar/upload", protectRoute, togarUploadImageHandler)
+router.post("/togar/upload", togarUploadImageHandler)
 
 //LOGOUT ROUTING
 router.get('/logout', function(req, res, next){

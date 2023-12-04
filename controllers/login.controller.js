@@ -53,7 +53,7 @@ const registerUserView = (req, res) => {
  * @apiParam {String} username The username of the user you intend to create.
  *
  * @apiSuccessExample {html} Success-Response:
- *     HTTP/1.1 201 Created
+ *     HTTP/1.1 302 Found
  *     Location: /register
  *
  * @apiErrorExample {html} Error-Response:
@@ -64,6 +64,10 @@ const registerUserView = (req, res) => {
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "error": "Invalid username format."
+ *     }
+ *     HTTP/1.1 429 Too Many Requests
+ *     {
+ *         "error": "Users has passed 100 req limit"
  *     }
  *     HTTP/1.1 500 Internal Server Error
  *     {
@@ -102,7 +106,7 @@ const registerUser = async (req, res) => {
 
             // Redirect to the login page after successful registration
             logger.info(`User created successfully: username - ${username}`);
-            res.status(201).redirect("login");
+            return res.status(302).redirect("login");
         }
     } catch (err) {
         // Handle database errors if user creation fails
@@ -143,6 +147,10 @@ const loginUserView = (req, res) => {
  *     HTTP/1.1 500 Internal Server Error
  *     {
  *       "message": "Internal Server Error"
+ *     }
+ *     HTTP/1.1 429 Too Many Requests
+ *     {
+ *         "error": "Users has passed 100 req limit"
  *     }
  */
 const loginUser = async (req, res, next) => {

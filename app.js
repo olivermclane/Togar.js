@@ -8,9 +8,6 @@ const path = require('path');
 //cookie parser
 const cookieParser = require("cookie-parser");
 
-//CRSF protection
-const csrf = require('lusca').csrf;
-
 
 // Rate limiter for requests
 const ratelimiter = require('./config/ratelimiter.js')
@@ -67,14 +64,16 @@ app.use(
     passport.session(),
     flash()
 );
-app.use(csrf());
-
-app.use('/uploads', express.static('uploads'));
 app.use(ratelimiter);
-
-// Applying Routes
 app.use("/", require("./routes/routes"));
+app.use('/uploads', express.static('uploads'));
+// Applying Routes
 module.exports = app;
 // Started Server
-app.listen(PORT, logger.info("Server started on port:  " + PORT));
-
+if (require.main === module) {
+    // This block will be executed only if this file is run directly,
+    // not when it's imported as a module in another file.
+    app.listen(PORT, () => {
+        logger.info("Server started on port:  " + PORT);
+    });
+}
