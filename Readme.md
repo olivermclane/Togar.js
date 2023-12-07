@@ -103,11 +103,10 @@ npm test
 ```
 This shell command will start the application tests using Jest.
 ## Troubleshooting
+
 ## Documentation
-- [HTML Documentation](https://olivermclane.github.io/Togar.js/)
-
-### PlantUML
-
+- [API Documentation](https://olivermclane.github.io/Togar.js/)
+## Troubleshooting
 ## Notes
 
 
