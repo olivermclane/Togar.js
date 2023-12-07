@@ -1,5 +1,6 @@
-const env = process.env.NODE_ENV || 'development';
-const dbConfig = require("../config/db.config.js");
+const env = process.env.NODE_ENV || 'dev';
+const dbConfig = require(`../config/${env}-db.config.js`);
+
 const logger = require("../config/logger");
 const Sequelize = require("sequelize");
 const DatabaseCon = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
@@ -30,13 +31,9 @@ database.users.hasMany(database.userimage, {
     as: 'images',
     foreignKey: {
         name: 'login_id',
+        columnName: 'login_id',
         allowNull: false
     }
 });
-
-database.userimage.belongsTo(database.users, {
-    as: "login",
-
-})
 
 module.exports = database;

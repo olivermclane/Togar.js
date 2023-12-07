@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
     // Specify the destination directory where uploaded files will be stored.
     destination: function (req, file, cb) {
         const userId = req.user.id;
-        const uploadDir = process.env.IMAGE_DIRECTORY + req.user.id + "/"
+        const uploadDir = process.env.IMAGE_DIRECTORY + req.user.login_id + "/"
 
         // Check if the directory exists, create it if not.
         if (!fs.existsSync(uploadDir)) {

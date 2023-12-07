@@ -2,7 +2,7 @@
 module.exports = (sequelize, Sequelize) => {
     const User = sequelize.define('logindata',{
         //Primary key is a integer and auto increments add new entries occur.
-        id: {
+        login_id: {
             type: Sequelize.INTEGER,
             primaryKey: true,
             autoIncrement: true,

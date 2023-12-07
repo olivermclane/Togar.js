@@ -28,7 +28,7 @@ const database = require('./models/index.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-//Allows origin of request to come from any origin (*)
+//Allows origin of request to come from any origin (*), we can adjust this based on where we want certain reqs to  from.
 var corsOptions = {
     origin: '*'
 };

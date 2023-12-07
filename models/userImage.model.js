@@ -23,11 +23,7 @@ module.exports = (sequelize, Sequelize) => {
         height: {
             type: Sequelize.INTEGER,
             allowNull: false,
-        },
-        login_id: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-        },
+        }
     })
 
     return UserImage;

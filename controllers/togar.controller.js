@@ -39,12 +39,16 @@ const logger = require("../config/logger");
  */
 const togarView = (req, res) => {
 
-    const userUploadsPath =  path.join(process.env.IMAGE_DIRECTORY, String(req.user.id));
+    const userUploadsPath =  path.join(process.env.IMAGE_DIRECTORY, String(req.user.login_id));
     // Read files from the user's uploads directory
     fs.readdir(userUploadsPath, (err, files) => {
+        if(!files){
+            logger.debug('User has no images', req.user.username);
+            return res.status(200).render('togar', { user: req.user, images: [] });
+        }
         if (err) {
             logger.error('Error reading/uploading files:', err);
-            return res.status(400).render('togar');
+            return res.status(400).render('togar', { user: req.user, images: [] });
         }
 
         // Array to store base64-encoded images
@@ -59,7 +63,6 @@ const togarView = (req, res) => {
             const base64ImageUrl = `data:image/${imageType};base64,${base64Image}`;
             base64Images.push(base64ImageUrl);
         });
-
         // Render your view with base64-encoded images
         res.status(200).render('togar', { user: req.user, images: base64Images });
     });
@@ -85,17 +88,16 @@ const processImage = async (req, res) => {
 
     try {
         // Process and save the image
-        const imagePath = path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), req.file.originalname);
+        const imagePath = path.join(process.env.IMAGE_DIRECTORY, String(req.user.login_id), req.file.originalname);
         const metadata = await sharp(imagePath).metadata();
-
         const userimage = {
             image_name: req.file.originalname,
             extension: fileExtension,
-            location: path.join(process.env.IMAGE_DIRECTORY, String(req.user.id), "/"),
+            location: path.join(process.env.IMAGE_DIRECTORY, String(req.user.login_id), "/"),
             image_size: req.file.size,
             width: metadata.width,
             height: metadata.height,
-            login_id: req.user.id,
+            login_id: req.user.login_id,
         };
 
         // Create database entry
@@ -107,7 +109,6 @@ const processImage = async (req, res) => {
         return res.status(415).redirect("/togar");
     }
 };
-
 
 /**
  * @api {post} /togar/upload Request for uploading user image
@@ -158,7 +159,6 @@ const togarUploadImageHandler = (req, res) => {
 
         // Process the image after the file upload is complete
         await processImage(req, res);
-
     });
 };
 

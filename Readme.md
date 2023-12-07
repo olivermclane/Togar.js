@@ -83,7 +83,7 @@ Now visit **http://localhost:3000**.
 1. Open a terminal prompt.
 2. Type **docker ps** and grab the container_id.
 3. Type **docker exec -it {container_id} bash**
-4. Type **psql -U postgres -d TogarData -h localhost**
+4. Type **psql -U {DB_USER} -d {DB_NAME} -h localhost** replace DB_USER and DB_NAME with your env values.
 5. Dig around the database:
 
        a. Type \dt to view avaliable tables.
@@ -91,7 +91,19 @@ Now visit **http://localhost:3000**.
        b. Select * from user_image; to view images saved by all users.
    
        c. Select * from logindata; to view user instances
-   
+### Testing Operations
+Testing with Togar.js it's quite simple after loading your local environment we are going to want to setup the test database, this is an instance that will run in postgres allowing us to simulate the application. Follow the steps below: 
+```shell
+docker build -t testingdb -f config/dockerfiletest.yaml .
+docker run --name testingdb -p 5432:5432 -d testingdb
+```
+We have successfully created the test database, now running the tests are simple. We can simply just run:
+```shell
+npm test
+```
+This shell command will start the application tests using Jest.
+## Troubleshooting
+
 ## Documentation
 - [API Documentation](https://olivermclane.github.io/Togar.js/)
 ## Troubleshooting

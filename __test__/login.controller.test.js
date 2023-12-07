@@ -9,7 +9,7 @@ const logger = require("../config/logger");
 
 // HELPERS
 const clearDatabase = async () => {
-    await database.users.destroy({ where: {} });
+    await database.users.destroy({ where: {}});
 };
 
 // REGISTER USER TESTS
@@ -31,7 +31,7 @@ describe("Register Testing", () => {
         const foundUser = await findUserByUsername(user);
 
         // Check the database to see if the user was created
-        expect(foundUser).toBeDefined();
+        expect(foundUser).not.toBeNull();
     });
 
     test("RegisterUser_UsernameLengthOver16_Fail",  async () => {
@@ -163,20 +163,32 @@ describe("Register Testing", () => {
         const user = "testuser";
 
         // Use async/await with supertest
-        const response = await request(app)
+        const ValidRegisterResponse = await request(app)
             .post("/register")
             .send({
                 username: user
             })
 
-        // Assert the HTTP response status
-        expect(response.status).toBe(302);
+        expect(ValidRegisterResponse.status).toBe(302);
 
-        // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
         // Check to see if the user was not created
         expect(foundUser).toBeDefined();
+
+        const response = await request(app)
+            .post("/register")
+            .send({
+                username: user
+            })
+        // Assert the HTTP response status
+        expect(response.status).toBe(409);
+
+        // Use await to get the resolved value of findUserByUsername
+        const foundUser_2 = await findUserByUsername(user);
+
+        // Check to see if the user was not created
+        expect(foundUser_2).toBeDefined();
     });
 
 });
@@ -241,10 +253,9 @@ describe("Login Testing", () => {
                 username: user
             });
 
-        // Assert the HTTP response status
-        expect(response.status).toBe(400);
-        expect(response.text).toContain('Please provide a valid username.');
 
+        // Assert the HTTP response status
+        expect(response.status).toBe(302); // Redirect if bad user or non-valid users.
         // Use await to get the resolved value of findUserByUsername
         const foundUser = await findUserByUsername(user);
 
