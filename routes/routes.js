@@ -15,7 +15,7 @@ const { togarUploadImageHandler} = require("../controllers/togar.controller");
 
 
 const router = express.Router();
-// "/" REDIRECT -- This will need work the protect route only redirects if the token is not valid.
+// "/" REDIRECT
 router.get("/", protectRoute, allowRoute)
 
 
@@ -30,7 +30,6 @@ router.post('/register', registerUser)
 
 //TOGAR APPLICATION ROUTING
 router.get("/togar", protectRoute, togarView )
-
 router.post("/togar/upload", togarUploadImageHandler)
 
 //LOGOUT ROUTING

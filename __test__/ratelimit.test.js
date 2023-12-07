@@ -36,7 +36,7 @@ describe('Rate Limiting Tests', () => {
 
     test('ExceedingRateLimit_Returns429', async () => {
         // Simulate making more requests than the allowed limit within a short time frame
-        const numRequests = 110;
+        const numRequests = 101;
         const promises = Array.from({ length: numRequests }, () =>
             request(app).get('/login')
             );

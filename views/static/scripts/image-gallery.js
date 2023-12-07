@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if there are slides before accessing the first slide's offsetWidth
     if (slides.length > 0) {
         slideWidth = slides[0].offsetWidth;
-        console.log(slideWidth); // Log slideWidth to check if it has a valid value
     }
 
     function slideTo(index) {

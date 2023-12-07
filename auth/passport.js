@@ -30,13 +30,13 @@ passport.use('local', new LocalStrategy({ usernameField: 'username', passwordFie
 
 // Serialize user data to store in the session (stores user id)
 passport.serializeUser(function (user, done) {
-    done(null, user.id);
+    done(null, user.login_id);
 });
 
 // Deserialize user data from the session (retrieves user information from user id)
 passport.deserializeUser(function (userId, done) {
     // Find user in the database based on the stored user id
-    User.findOne({ where: { id: userId } })
+    User.findOne({ where: { login_id: userId } })
         .then(function (user) {
             // Handle successful query and return user data
             done(null, user);

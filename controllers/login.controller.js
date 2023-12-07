@@ -26,14 +26,13 @@ async function findUserByUsername(username) {
     try {
         // Query the database to find users matching the provided username
         const users = await User.findAll({ where: {username: username} });
-        // Return the first user found (if any)
+        // Return the first user found
         return (users instanceof Array) ? users[0] : null;
     } catch (ex) {
         // Handle exceptions if the database query fails
         throw ex;
     }
 }
-
 // Render the register view for user registration
 /**
  * @api {get} /register Loads user creation page
@@ -77,7 +76,6 @@ const registerUserView = (req, res) => {
 const registerUser = async (req, res) => {
     const { username } = req.body;
     const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/;
-
     if (!username || !username.match(usernameRegex)) {
         const errors = "Invalid username format.";
         logger.error(`User creation failed due to validation errors: ${errors}`);
@@ -159,7 +157,7 @@ const loginUser = async (req, res, next) => {
     //Confirming the entered username matches our schema
     const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/;
     const user = await findUserByUsername(username);
-    if (!username || !username.match(usernameRegex) || !user) {
+    if (!username || !username.match(usernameRegex || !user)) {
         errors.push("Please provide a valid username.");
     }
 
