@@ -71,7 +71,7 @@ describe('Image Upload Tests', () => {
         // Execute actual image upload using the POST request
         const uploadResponse = await agent
             .post('/togar/upload')
-            .attach('imageFile', '/testingImages/mockedFile.jpg');
+            .attach('imageFile', 'testingImages/mockedFile.jpg');
 
         // Expecting a redirect to /togar
         expect(uploadResponse.status).toBe(302);
@@ -79,7 +79,7 @@ describe('Image Upload Tests', () => {
         const user = await findUserByUsername('testUser');
         // Retrieve the rendered view after the image upload
         const viewResponse = await agent.get('/togar');
-        expect(readFile('/testingImages/mockedFile.jpg') === readFile(process.env.IMAGE_DIRECTORY + user.id+ "/mockedFile.jpg"));
+        expect(readFile('testingImages/mockedFile.jpg') === readFile(process.env.IMAGE_DIRECTORY + user.login_id+ "/mockedFile.jpg"));
 
         // Extract the base64-encoded images from the rendered view
         expect(viewResponse.text.includes('data:image')).toBeTruthy();
@@ -111,7 +111,7 @@ describe('Image Upload Tests', () => {
         // Execute actual image upload using the POST request
         const uploadResponse = await agent
             .post('/togar/upload')
-            .attach('imageFile', '/testingImages/mockedFile.jpeg');
+            .attach('imageFile', 'testingImages/mockedFile.jpeg');
 
         // Expecting a redirect to /togar
         expect(uploadResponse.status).toBe(302);
@@ -122,10 +122,10 @@ describe('Image Upload Tests', () => {
 
         // Ensure that the user is found and has an 'id' property
         expect(user).toBeTruthy();
-        expect(user.id).toBeDefined();
+        expect(user.login_id).toBeDefined();
 
         // Check if the file exists in the specified directory
-        expect(readFile('/testingImages/mockedFile.jpeg') === readFile(process.env.IMAGE_DIRECTORY + user.id + "/mockedFile.jpeg"));
+        expect(readFile('testingImages/mockedFile.jpeg') === readFile(process.env.IMAGE_DIRECTORY + user.login_id + "/mockedFile.jpeg"));
         const viewResponse = await agent.get('/togar');
 
         expect(viewResponse.text.includes('data:image')).toBeTruthy();
@@ -156,7 +156,7 @@ describe('Image Upload Tests', () => {
         // Execute actual image upload using the POST request
         const uploadResponse = await agent
             .post('/togar/upload')
-            .attach('imageFile', '/testingImages/mockedFile.png');
+            .attach('imageFile', 'testingImages/mockedFile.png');
 
         // Expecting a redirect to /togar
         expect(uploadResponse.status).toBe(302);
@@ -167,10 +167,10 @@ describe('Image Upload Tests', () => {
 
         // Ensure that the user is found and has an 'id' property
         expect(user).toBeTruthy();
-        expect(user.id).toBeDefined();
+        expect(user.login_id).toBeDefined();
 
         // Check if the file exists in the specified directory
-        expect(readFile('/testingImages/mockedFile.png') === readFile(process.env.IMAGE_DIRECTORY + user.id + "/mockedFile.png"));
+        expect(readFile('testingImages/mockedFile.png') === readFile(process.env.IMAGE_DIRECTORY + user.login_id + "/mockedFile.png"));
         const viewResponse = await agent.get('/togar');
 
         expect(viewResponse.text.includes('data:image')).toBeTruthy();
@@ -202,7 +202,7 @@ describe('Image Upload Tests', () => {
         // Execute actual image upload using the POST request for mockedFile.png
         const uploadResponsePNG = await agent
             .post('/togar/upload')
-            .attach('imageFile', '/testingImages/mockedFile.png');
+            .attach('imageFile', 'testingImages/mockedFile.png');
 
         // Expecting a redirect to /togar
         expect(uploadResponsePNG.status).toBe(302);
@@ -217,7 +217,7 @@ describe('Image Upload Tests', () => {
         // Execute actual image upload using the POST request for mockedFile.jpeg
         const uploadResponseJPEG = await agent
             .post('/togar/upload')
-            .attach('imageFile', '/testingImages/mockedFile.jpeg');
+            .attach('imageFile', 'testingImages/mockedFile.jpeg');
 
         // Expecting a redirect to /togar
         expect(uploadResponseJPEG.status).toBe(302);
@@ -256,7 +256,7 @@ describe('Image Upload Tests', () => {
         // Execute actual image upload using the POST request
         const uploadResponse = await agent
             .post('/togar/upload')
-            .attach('imageFile', '/testingImages/mockedFile.txt');
+            .attach('imageFile', 'testingImages/mockedFile.txt');
 
         // Expecting a redirect to /togar
         expect(uploadResponse.status).toBe(302);
@@ -292,7 +292,7 @@ describe('Image Upload Tests', () => {
         // Execute actual image upload using the POST request
         const uploadResponse = await agent
             .post('/togar/upload')
-            .attach('imageFile', '/testingImages/mockedFile.pages');
+            .attach('imageFile', 'testingImages/mockedFile.pages');
 
         // Expecting a redirect to /togar
         expect(uploadResponse.status).toBe(302);
@@ -328,7 +328,7 @@ describe('Image Upload Tests', () => {
         // Execute actual image upload using the POST request
         const uploadResponse = await agent
             .post('/togar/upload')
-            .attach('imageFile', '/testingImages/mockedFile.exe');
+            .attach('imageFile', 'testingImages/mockedFile.exe');
 
         // Expecting a redirect to /togar
         expect(uploadResponse.status).toBe(302);
