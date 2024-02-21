@@ -20,7 +20,7 @@
     "express-flash": "^0.0.2",
     "express-rate-limit": "^7.1.5",
     "express-session": "^1.17.3",
-    "ip": "^2.0.0",
+    "ip": "^2.0.1",
     "lusca": "^1.7.0",
     "multer": "^1.4.5-lts.1",
     "passport": "^0.6.0",
